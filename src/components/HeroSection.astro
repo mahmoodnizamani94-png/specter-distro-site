@@ -1,0 +1,423 @@
+---
+/**
+ * SPECTER SITE — Hero Section
+ *
+ * Full-viewport hero with:
+ * - Eyebrow positioning line
+ * - Text-decrypt animated title (JS, not React)
+ * - Body copy with delayed fade-in
+ * - Trust line
+ * - Release-state-aware dual CTAs
+ * - Scan-line overlay (2px intervals, 3% opacity, drifting)
+ * - Phosphor glow on title (4s pulse)
+ *
+ * JS disabled: title renders immediately, CTAs work as anchor links.
+ *
+ * @see PRD §FR-01 Hero Section
+ * @see PRD §16.1 Text Decrypt Animation
+ */
+
+import { RELEASE } from '../content/release';
+import { resolveReleaseCTAs } from '../lib/release-resolver';
+
+const resolved = resolveReleaseCTAs(RELEASE);
+const { primary, secondary } = resolved;
+
+const HERO_TITLE = 'Generate subtitles without uploading your media.';
+---
+
+<div class="hero-container">
+  {/* Scan-line overlay */}
+  <div class="scan-line-overlay" aria-hidden="true"></div>
+
+  <div class="hero-grid">
+    {/* Copy column */}
+    <div class="hero-copy">
+      <p class="hero-eyebrow type-label">Offline subtitle generation for Android</p>
+
+      <h2 class="hero-title type-display" id="hero-title" data-text={HERO_TITLE}>
+        <span class="hero-title-text">{HERO_TITLE}</span>
+      </h2>
+
+      <p class="hero-body type-body" id="hero-body">
+        Import audio, video, or a ZIP archive. SPECTER generates one subtitle file per media file on your device.
+      </p>
+
+      <p class="hero-trust type-label">No account. No cloud upload. No transcription server.</p>
+
+      <div class="hero-cta-group">
+        {primary.type === 'scroll_to_download' && (
+          <a href="#download" class="btn-primary focus-two-ring" id="hero-cta-primary">
+            {primary.label}
+          </a>
+        )}
+        {primary.type === 'external_link' && (
+          <a href={primary.url} class="btn-primary focus-two-ring" id="hero-cta-primary" target="_blank" rel="noopener noreferrer">
+            {primary.label}
+          </a>
+        )}
+
+        {secondary.type === 'scroll_to_download' && (
+          <a href="#download" class="btn-secondary" id="hero-cta-secondary">
+            {secondary.label}
+          </a>
+        )}
+        {secondary.type === 'external_link' && (
+          <a href={secondary.url} class="btn-secondary" id="hero-cta-secondary" target="_blank" rel="noopener noreferrer">
+            {secondary.label}
+          </a>
+        )}
+      </div>
+    </div>
+
+    {/* Radar column — ReleaseRadar island injected from index.astro */}
+    <div class="hero-radar-slot" id="hero-radar-slot">
+      <slot name="radar" />
+    </div>
+  </div>
+</div>
+
+{/* Text-decrypt animation script — runs once on load, no framework needed */}
+<script>
+  const GLYPHS = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+  const CYCLES_PER_CHAR = 4;
+  const CYCLE_INTERVAL_MS = 50;
+
+  function runDecrypt() {
+    const el = document.getElementById('hero-title');
+    if (!el) return;
+
+    const targetText = el.getAttribute('data-text');
+    if (!targetText) return;
+
+    const textSpan = el.querySelector('.hero-title-text');
+    if (!textSpan) return;
+
+    // Lock container height to prevent layout shift during glyph cycling.
+    // The final text is already rendered (SSR), so getBoundingClientRect
+    // returns the correct settled height before we replace content.
+    const settledHeight = el.getBoundingClientRect().height;
+    el.style.minHeight = `${settledHeight}px`;
+
+    // Build character spans
+    const chars = targetText.split('');
+    textSpan.textContent = '';
+    const spans: HTMLSpanElement[] = [];
+
+    chars.forEach((char) => {
+      const span = document.createElement('span');
+      span.className = 'decrypt-char';
+      // Spaces render as-is immediately
+      if (char === ' ') {
+        span.textContent = ' ';
+        span.dataset.resolved = 'true';
+      } else {
+        span.textContent = GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
+        span.style.opacity = '0.4';
+        span.dataset.resolved = 'false';
+      }
+      textSpan.appendChild(span);
+      spans.push(span);
+    });
+
+    // Resolve each non-space character left-to-right
+    let charIndex = 0;
+    const resolveNext = () => {
+      // Skip spaces
+      while (charIndex < spans.length && chars[charIndex] === ' ') {
+        charIndex++;
+      }
+      if (charIndex >= spans.length) {
+        // All resolved — release height lock, trigger body fade-in
+        el.style.minHeight = '';
+        const body = document.getElementById('hero-body');
+        if (body) body.classList.add('hero-body-visible');
+        return;
+      }
+
+      const span = spans[charIndex];
+      const finalChar = chars[charIndex];
+      let cycles = 0;
+
+      const interval = setInterval(() => {
+        if (cycles >= CYCLES_PER_CHAR) {
+          clearInterval(interval);
+          span.textContent = finalChar;
+          span.style.opacity = '1';
+          span.dataset.resolved = 'true';
+          charIndex++;
+          resolveNext();
+          return;
+        }
+        span.textContent = GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
+        span.style.opacity = String(0.4 + (cycles / CYCLES_PER_CHAR) * 0.6);
+        cycles++;
+      }, CYCLE_INTERVAL_MS);
+    };
+
+    resolveNext();
+  }
+
+  // Respect reduced motion
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReducedMotion) {
+    // Show body immediately since no animation plays
+    const body = document.getElementById('hero-body');
+    if (body) body.classList.add('hero-body-visible');
+  } else {
+    runDecrypt();
+  }
+</script>
+
+<style>
+  .hero-container {
+    position: relative;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    padding-top: calc(var(--nav-height-desktop) + var(--space-6));
+    padding-bottom: var(--space-8);
+    padding-left: var(--margin-desktop);
+    padding-right: var(--margin-desktop);
+    overflow: hidden;
+  }
+
+  /* ─── Scan-line overlay ─── */
+  .scan-line-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    background: repeating-linear-gradient(
+      to bottom,
+      var(--overlay-scanline) 0px,
+      var(--overlay-scanline) 1px,
+      transparent 1px,
+      transparent 2px
+    );
+    animation: scan-line-drift var(--duration-drift) linear infinite;
+  }
+
+  /* ─── Grid ─── */
+  .hero-grid {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 6fr 1fr 5fr;
+    align-items: center;
+    gap: 0;
+    width: 100%;
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+  }
+
+  /* ─── Copy column ─── */
+  .hero-copy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .hero-eyebrow {
+    color: var(--text-muted);
+    max-width: none;
+  }
+
+  .hero-title {
+    color: var(--text-primary);
+    animation: phosphor-glow-ambient 4s infinite;
+    max-width: 14ch;
+    line-height: 0.98;
+    letter-spacing: -0.018em;
+  }
+
+  .hero-title :global(.decrypt-char) {
+    display: inline;
+    transition: opacity var(--duration-fast) var(--ease-standard);
+  }
+
+  .hero-body {
+    color: var(--text-secondary);
+    opacity: 0;
+    transition: opacity 400ms var(--ease-enter);
+  }
+
+  .hero-body.hero-body-visible,
+  :global([data-reduced-motion]) .hero-body {
+    opacity: 1;
+  }
+
+  /* JS-disabled fallback: body is visible immediately */
+  @media (scripting: none) {
+    .hero-body {
+      opacity: 1;
+    }
+  }
+
+  .hero-trust {
+    color: var(--text-accent);
+    max-width: none;
+  }
+
+  /* ─── CTA Group ─── */
+  .hero-cta-group {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+    padding-top: var(--space-1);
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: var(--btn-primary-height);
+    min-width: var(--btn-primary-min-width);
+    padding-left: var(--btn-primary-padding-x);
+    padding-right: var(--btn-primary-padding-x);
+    background-color: var(--btn-primary-bg);
+    color: var(--btn-primary-fg);
+    font-family: var(--font-body);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--type-size-label);
+    line-height: var(--line-height-label);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    border-radius: var(--radius-soft);
+    cursor: pointer;
+    box-shadow:
+      inset 0 1px 0 0 oklch(0.78 0.14 280 / 0.35),
+      0 1px 3px 0 oklch(0 0 0 / 0.25);
+    transition:
+      background-color var(--duration-fast) var(--ease-standard),
+      box-shadow var(--duration-fast) var(--ease-standard);
+  }
+
+  .btn-primary:hover {
+    background-color: var(--btn-primary-bg-hover);
+    box-shadow:
+      inset 0 1px 0 0 oklch(0.88 0.14 280 / 0.35),
+      0 2px 8px 0 var(--color-spectra-700);
+  }
+
+  .btn-primary:active {
+    background-color: var(--btn-primary-bg-pressed);
+    box-shadow: inset 0 1px 3px 0 oklch(0 0 0 / 0.2);
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: var(--btn-secondary-height);
+    padding-left: var(--btn-primary-padding-x);
+    padding-right: var(--btn-primary-padding-x);
+    background-color: var(--btn-secondary-bg);
+    color: var(--btn-secondary-fg);
+    font-family: var(--font-body);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--type-size-label);
+    line-height: var(--line-height-label);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid var(--btn-secondary-border);
+    border-radius: var(--btn-secondary-radius);
+    cursor: pointer;
+    transition:
+      background-color var(--duration-fast) var(--ease-standard),
+      border-color var(--duration-fast) var(--ease-standard);
+  }
+
+  .btn-secondary:hover {
+    background-color: var(--btn-secondary-bg-hover);
+    border-color: var(--btn-secondary-border-hover);
+  }
+
+  .btn-secondary:active {
+    background-color: var(--btn-secondary-bg-pressed);
+  }
+
+  /* ─── Radar slot ─── */
+  .hero-radar-slot {
+    grid-column: 3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* ─── Tablet ─── */
+  @media (max-width: 1023px) {
+    .hero-container {
+      padding-left: var(--margin-tablet);
+      padding-right: var(--margin-tablet);
+    }
+
+    .hero-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-4);
+    }
+
+    .hero-radar-slot {
+      grid-column: 2;
+    }
+  }
+
+  /* ─── Mobile ─── */
+  @media (max-width: 767px) {
+    .hero-container {
+      padding-top: calc(var(--nav-height-mobile) + var(--space-4));
+      padding-left: var(--margin-mobile);
+      padding-right: var(--margin-mobile);
+      min-height: auto;
+      padding-bottom: var(--space-6);
+    }
+
+    .hero-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-4);
+      text-align: center;
+    }
+
+    .hero-copy {
+      align-items: center;
+      order: 0;
+    }
+
+    .hero-title {
+      max-width: none;
+    }
+
+    .hero-body {
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-cta-group {
+      justify-content: center;
+    }
+
+    .hero-radar-slot {
+      grid-column: 1;
+      order: 1;
+    }
+  }
+
+  /* ─── Reduced motion: no scan-line drift, no glow ─── */
+  @media (prefers-reduced-motion: reduce) {
+    .scan-line-overlay {
+      animation: none;
+    }
+
+    .hero-title {
+      animation: none;
+    }
+
+    .hero-body {
+      opacity: 1;
+      transition: none;
+    }
+  }
+</style>

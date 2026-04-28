@@ -1,0 +1,341 @@
+---
+/**
+ * SPECTER SITE — Dossier Preview
+ *
+ * Portfolio-grade craft proof. Architecture showcase, not personal bio.
+ * Three sub-sections:
+ * 1. Pipeline diagram: 5-stage terminal sequential flow
+ * 2. SIGNAL/PHOSPHOR design system token architecture example
+ * 3. Engineering constraints: 3 concise architecture notes
+ *
+ * @see PRD §FR-08 Dossier Preview
+ */
+
+import type { PipelineStage } from '../types/release';
+
+const PIPELINE_STAGES: PipelineStage[] = [
+  { label: 'IMPORT', description: 'Load media from device storage' },
+  { label: 'EXTRACT', description: 'Isolate audio channel from container' },
+  { label: 'INFER', description: 'Run Whisper model on audio segments' },
+  { label: 'GENERATE', description: 'Assemble timestamped SRT entries' },
+  { label: 'EXPORT', description: 'Write .srt file to output directory' },
+];
+
+const CONSTRAINTS = [
+  {
+    id: 'constraint-offline',
+    label: 'OFFLINE-FIRST',
+    description: 'The entire transcription pipeline runs without network access. The Whisper model ships with the APK. No server, no API key, no fallback to cloud.',
+  },
+  {
+    id: 'constraint-inference',
+    label: 'ON-DEVICE INFERENCE',
+    description: 'Audio processing and speech recognition execute on the device GPU/CPU. Model selection adapts to available RAM, from 1GB base to 3GB turbo.',
+  },
+  {
+    id: 'constraint-privacy',
+    label: 'PRIVACY BY ARCHITECTURE',
+    description: 'No network permission is requested. No telemetry SDK is included. No user data leaves the device boundary at any point in the pipeline.',
+  },
+];
+---
+
+<div class="dossier-section">
+  <h2 class="dossier-heading type-heading" id="dossier-heading">Technical dossier</h2>
+
+  {/* Pipeline diagram */}
+  <div class="dossier-block">
+    <h3 class="dossier-subheading type-subheading">Processing pipeline</h3>
+    <div class="pipeline" role="list" aria-label="Processing pipeline stages">
+      {PIPELINE_STAGES.map((stage, i) => (
+        <div class="pipeline-stage" role="listitem">
+          <div class="stage-indicator">
+            <span class="stage-number type-code">[{String(i + 1).padStart(2, '0')}]</span>
+            {i < PIPELINE_STAGES.length - 1 && (
+              <div class="stage-connector" aria-hidden="true">
+                <span class="connector-arrow">↓</span>
+              </div>
+            )}
+          </div>
+          <div class="stage-content">
+            <p class="stage-label type-code">{stage.label}</p>
+            <p class="stage-description type-body">{stage.description}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  {/* Design system showcase */}
+  <div class="dossier-block">
+    <h3 class="dossier-subheading type-subheading">Design system architecture</h3>
+    <p class="dossier-body type-body">
+      SPECTER uses two sibling design systems: PHOSPHOR for the Android app and SIGNAL for this
+      site. Both share a three-layer token architecture that maps raw values through semantic
+      roles to component-specific aliases.
+    </p>
+    <div class="token-example" role="figure" aria-label="Token architecture example">
+      <div class="token-layer">
+        <span class="token-layer-label type-caption">PRIMITIVE</span>
+        <code class="token-value type-code">--color-spectra-400: oklch(0.66 0.18 280)</code>
+      </div>
+      <div class="token-arrow" aria-hidden="true">→</div>
+      <div class="token-layer">
+        <span class="token-layer-label type-caption">SEMANTIC</span>
+        <code class="token-value type-code">--text-accent: var(--color-spectra-400)</code>
+      </div>
+      <div class="token-arrow" aria-hidden="true">→</div>
+      <div class="token-layer">
+        <span class="token-layer-label type-caption">COMPONENT</span>
+        <code class="token-value type-code">--card-icon: var(--text-accent)</code>
+      </div>
+    </div>
+  </div>
+
+  {/* Engineering constraints */}
+  <div class="dossier-block">
+    <h3 class="dossier-subheading type-subheading">Engineering constraints</h3>
+    <div class="constraints" role="list">
+      {CONSTRAINTS.map((c) => (
+        <div class="constraint-item" role="listitem" id={c.id}>
+          <div class="constraint-header">
+            <span class="constraint-indicator" aria-hidden="true">&#9632;</span>
+            <span class="constraint-label type-code">{c.label}</span>
+          </div>
+          <p class="constraint-description type-body">{c.description}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  {/* CTA */}
+  <a href="#dossier" class="dossier-cta type-label" id="dossier-cta">
+    Inspect the technical dossier
+  </a>
+</div>
+
+<style>
+  .dossier-section {
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: 0 var(--margin-desktop);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .dossier-heading {
+    color: var(--text-primary);
+  }
+
+  .dossier-block {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .dossier-subheading {
+    color: var(--text-primary);
+  }
+
+  .dossier-body {
+    color: var(--text-secondary);
+  }
+
+  /* ─── Pipeline ─── */
+  .pipeline {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .pipeline-stage {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .stage-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    width: 56px;
+  }
+
+  .stage-number {
+    color: var(--text-accent);
+    font-weight: var(--font-weight-bold);
+    white-space: nowrap;
+    padding: var(--space-0-5) 0;
+  }
+
+  .stage-connector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 32px;
+    justify-content: center;
+  }
+
+  .connector-arrow {
+    color: var(--text-accent-dim);
+    font-family: var(--font-code);
+    font-size: var(--type-size-caption);
+    line-height: 1;
+  }
+
+  .stage-content {
+    padding-top: var(--space-0-5);
+    padding-bottom: var(--space-3);
+  }
+
+  .stage-label {
+    color: var(--text-primary);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.08em;
+    margin-bottom: var(--space-0-5);
+  }
+
+  .stage-description {
+    color: var(--text-secondary);
+  }
+
+  /* ─── Token Architecture Example ─── */
+  .token-example {
+    display: flex;
+    align-items: stretch;
+    gap: var(--space-2);
+    padding: var(--space-3);
+    background-color: var(--surface-sunken);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sharp);
+    overflow-x: auto;
+  }
+
+  .token-layer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-0-5);
+    flex: 1;
+    min-width: 0;
+  }
+
+  .token-layer-label {
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .token-value {
+    color: var(--text-accent);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .token-arrow {
+    display: flex;
+    align-items: center;
+    color: var(--text-accent-dim);
+    font-family: var(--font-code);
+    font-size: var(--type-size-code);
+    flex-shrink: 0;
+    padding-top: var(--space-2);
+  }
+
+  /* ─── Constraints ─── */
+  .constraints {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .constraint-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-0-5);
+    padding: var(--space-2) var(--space-3);
+    background-color: var(--surface-raised);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sharp);
+  }
+
+  .constraint-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .constraint-indicator {
+    color: var(--status-complete);
+    font-size: var(--type-size-code);
+    line-height: 1;
+  }
+
+  .constraint-label {
+    color: var(--text-primary);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.06em;
+  }
+
+  .constraint-description {
+    color: var(--text-secondary);
+    padding-left: calc(var(--type-size-code) + var(--space-2));
+  }
+
+  /* ─── Dossier CTA ─── */
+  .dossier-cta {
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    color: var(--text-accent);
+    text-decoration: none;
+    padding: var(--space-1) 0;
+    border-bottom: 1px solid var(--border-active);
+    transition:
+      color var(--duration-fast) var(--ease-standard),
+      border-color var(--duration-fast) var(--ease-standard);
+  }
+
+  .dossier-cta:hover {
+    color: var(--color-spectra-300);
+    border-color: var(--color-spectra-300);
+  }
+
+  /* ─── Tablet ─── */
+  @media (max-width: 1023px) {
+    .dossier-section {
+      padding: 0 var(--margin-tablet);
+    }
+
+    .token-example {
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+
+    .token-arrow {
+      padding-top: 0;
+      justify-content: center;
+      transform: rotate(90deg);
+    }
+  }
+
+  /* ─── Mobile ─── */
+  @media (max-width: 767px) {
+    .dossier-section {
+      padding: 0 var(--margin-mobile);
+    }
+
+    .stage-indicator {
+      width: 48px;
+    }
+
+    .stage-connector {
+      height: 24px;
+    }
+
+    .constraint-description {
+      padding-left: 0;
+    }
+  }
+</style>

@@ -1,0 +1,187 @@
+---
+/**
+ * SPECTER SITE — Base Layout
+ *
+ * HTML shell for every page. Provides:
+ * - Charset, viewport, title, description
+ * - Open Graph and Twitter Card meta tags
+ * - Structured data (SoftwareApplication JSON-LD, conditional on Play URL)
+ * - Content Security Policy via <meta http-equiv>
+ * - Critical inline styles (body bg + font-face declarations)
+ * - Global stylesheet imports (variables, global, animations, print)
+ * - Font preload <link> tags for Syne and JetBrains Mono
+ * - Skip-to-content link
+ * - <header> with NavBar
+ * - <main id="main-content"> with slotted content
+ *
+ * @see PRD §12.FR-13, §12.FR-14, §19
+ */
+
+import NavBar from '../components/NavBar.astro';
+import { RELEASE } from '../content/release';
+
+import '../styles/variables.css';
+import '../styles/global.css';
+import '../styles/animations.css';
+import '../styles/islands.css';
+import '../styles/print.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  canonicalUrl?: string;
+}
+
+const {
+  title = 'SPECTER — Offline AI Subtitle Generator for Android',
+  description = 'Generate subtitles from audio and video files entirely on your phone. No cloud. No uploads. No account. Batch processing, 99+ languages, privacy-first.',
+  ogImage = '/assets/og-image.png',
+  canonicalUrl,
+} = Astro.props;
+
+const isDev = import.meta.env.DEV;
+
+const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? '';
+
+// Resolve absolute URLs for meta tags
+const absoluteOgImage = ogImage.startsWith('http')
+  ? ogImage
+  : `${siteUrl}${ogImage.startsWith('/') ? '' : '/'}${ogImage}`;
+
+const resolvedCanonical = canonicalUrl
+  ? (canonicalUrl.startsWith('http') ? canonicalUrl : `${siteUrl}${canonicalUrl}`)
+  : `${siteUrl}${Astro.url.pathname}`;
+
+// Resolve release state for conditional structured data
+const playUrl = RELEASE.play.enabled && RELEASE.play.url ? RELEASE.play.url : null;
+const showStructuredData = playUrl !== null;
+
+// CSP: strict in production (connect-src 'none' — zero outbound requests).
+// In dev mode, Vite needs connect-src for module fetching (http + ws) and Astro dev toolbar.
+const cspContent = isDev
+  ? "default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'self' ws://localhost:* http://localhost:* https://astro.build;"
+  : "default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; font-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'none';";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    {/* Primary Meta */}
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    {/* Canonical */}
+    <link rel="canonical" href={resolvedCanonical} />
+
+    {/* Favicon */}
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+
+    {/* Open Graph */}
+    <meta property="og:title" content={title.replace(' — Offline AI Subtitle Generator for Android', '')} />
+    <meta property="og:description" content="Generate subtitles entirely on-device. No cloud, no uploads, no tracking." />
+    <meta property="og:image" content={absoluteOgImage} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={resolvedCanonical} />
+
+    {/* Twitter Card */}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title.replace(' — Offline AI Subtitle Generator for Android', '')} />
+    <meta name="twitter:description" content="Generate subtitles entirely on-device. No cloud, no uploads, no tracking." />
+    <meta name="twitter:image" content={absoluteOgImage} />
+
+    {/* Content Security Policy */}
+    <meta
+      http-equiv="Content-Security-Policy"
+      content={cspContent}
+    />
+
+    {/* Font Preload — critical path fonts */}
+    <link rel="preload" href="/fonts/syne-variable.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/jetbrains-mono-variable.woff2" as="font" type="font/woff2" crossorigin />
+
+    {/* Structured Data — conditional on Play URL being live */}
+    {showStructuredData && (
+      <script type="application/ld+json" set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        'name': 'SPECTER',
+        'operatingSystem': 'Android',
+        'applicationCategory': 'MultimediaApplication',
+        'downloadUrl': playUrl,
+        ...(RELEASE.apk.versionName ? { 'softwareVersion': RELEASE.apk.versionName } : {}),
+      })} />
+    )}
+
+    {/* Critical inline styles — prevent FOUC */}
+    <style is:inline>
+      body {
+        background-color: oklch(0.06 0.008 272);
+      }
+      @font-face {
+        font-family: 'Syne';
+        src: url('/fonts/syne-variable.woff2') format('woff2-variations');
+        font-weight: 400 800;
+        font-display: swap;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: 'Source Sans 3';
+        src: url('/fonts/source-sans-3-variable.woff2') format('woff2-variations');
+        font-weight: 200 900;
+        font-display: swap;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: 'JetBrains Mono';
+        src: url('/fonts/jetbrains-mono-variable.woff2') format('woff2-variations');
+        font-weight: 100 800;
+        font-display: optional;
+        font-style: normal;
+      }
+    </style>
+  </head>
+  <body>
+    {/* Skip-to-content — first focusable element */}
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <NavBar />
+
+    <main id="main-content">
+      <slot />
+    </main>
+  </body>
+</html>
+
+<style>
+  /* ─── Skip Link ─── */
+  .skip-link {
+    position: absolute;
+    top: var(--space-1);
+    left: var(--space-1);
+    z-index: 300;
+    padding: var(--space-1) var(--space-2);
+    background-color: var(--action-primary-bg);
+    color: var(--action-primary-fg);
+    font-family: var(--font-body);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--type-size-label);
+    line-height: var(--line-height-label);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: var(--radius-sharp);
+    transform: translateY(-200%);
+    transition: transform var(--duration-fast) var(--ease-out-expo);
+  }
+
+  .skip-link:focus {
+    transform: translateY(0);
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+</style>

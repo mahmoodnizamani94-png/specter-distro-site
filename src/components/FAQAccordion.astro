@@ -1,0 +1,127 @@
+---
+/**
+ * SPECTER SITE — FAQ Accordion
+ *
+ * Native <details>/<summary> accordion with 8 Q&A pairs.
+ * Keyboard-operable: Enter/Space toggles, native browser behavior.
+ * Content visible in HTML source for SEO crawlers.
+ * CSS-only chevron rotation — no JS required for core behavior.
+ *
+ * @see PRD §FR-09
+ * @see src/content/faq.ts
+ */
+
+import { FAQ_ITEMS } from '../content/faq';
+---
+
+<div class="faq-section">
+  <h2 class="faq-heading type-heading" id="faq-heading">Frequently asked questions</h2>
+
+  <div class="faq-list" role="list">
+    {FAQ_ITEMS.map((item) => (
+      <details class="faq-item" role="listitem" id={item.id}>
+        <summary class="faq-question type-subheading">
+          <span class="faq-question-text">{item.question}</span>
+          <span class="faq-chevron" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
+              <polyline points="4,6 8,10 12,6" />
+            </svg>
+          </span>
+        </summary>
+        <div class="faq-answer">
+          <p class="faq-answer-text type-body">{item.answer}</p>
+        </div>
+      </details>
+    ))}
+  </div>
+</div>
+
+<style>
+  .faq-section {
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: 0 var(--margin-desktop);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .faq-heading {
+    color: var(--text-primary);
+  }
+
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .faq-item {
+    border-bottom: 1px solid var(--faq-border);
+  }
+
+  .faq-item:last-child {
+    border-bottom: none;
+  }
+
+  .faq-question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    padding: var(--space-3) 0;
+    color: var(--faq-question);
+    cursor: pointer;
+    transition: color var(--duration-fast) var(--ease-standard);
+  }
+
+  .faq-question:hover {
+    color: var(--text-accent);
+  }
+
+  .faq-question-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .faq-chevron {
+    flex-shrink: 0;
+    color: var(--faq-toggle);
+    transition: transform var(--duration-fast) var(--ease-standard);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+  }
+
+  /* Rotate chevron when details is open — CSS only */
+  .faq-item[open] > .faq-question > .faq-chevron {
+    transform: rotate(180deg);
+  }
+
+  .faq-answer {
+    padding-bottom: var(--space-3);
+  }
+
+  .faq-answer-text {
+    color: var(--faq-answer);
+  }
+
+  /* ─── Tablet ─── */
+  @media (max-width: 1023px) {
+    .faq-section {
+      padding: 0 var(--margin-tablet);
+    }
+  }
+
+  /* ─── Mobile ─── */
+  @media (max-width: 767px) {
+    .faq-section {
+      padding: 0 var(--margin-mobile);
+    }
+
+    .faq-question {
+      padding: var(--space-2) 0;
+    }
+  }
+</style>

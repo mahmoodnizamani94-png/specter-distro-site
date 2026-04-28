@@ -1,0 +1,171 @@
+---
+/**
+ * SPECTER SITE — Mobile Navigation Overlay
+ *
+ * Full-screen overlay for mobile navigation.
+ * Triggered by hamburger button in NavBar.
+ * Hidden by default (hidden attribute).
+ *
+ * Features:
+ * - Backdrop blur 20px on surface.overlay
+ * - Links at Heading role, centered vertically
+ * - Close on link tap, X button, or Escape key
+ * - Enter animation: overlay-enter (280ms, slide from right + fade)
+ * - Exit animation: overlay-exit (200ms, slide to right + fade)
+ * - Body scroll locked while open (managed by NavBar script)
+ *
+ * @see PRD §10.2, §18.6
+ */
+
+interface Props {
+  items: Array<{
+    label: string;
+    href: string;
+    external?: boolean;
+  }>;
+}
+
+const { items } = Astro.props;
+---
+
+<div
+  class="mobile-nav-overlay"
+  id="mobile-nav-overlay"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Navigation menu"
+  hidden
+>
+  <div class="overlay-content">
+    <button
+      class="overlay-close-btn"
+      type="button"
+      id="overlay-close-btn"
+      aria-label="Close navigation menu"
+    >
+      {/* X close icon */}
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="square"
+        aria-hidden="true"
+      >
+        <line x1="6" y1="6" x2="18" y2="18" />
+        <line x1="18" y1="6" x2="6" y2="18" />
+      </svg>
+    </button>
+
+    <nav class="overlay-nav" aria-label="Mobile navigation">
+      <ul class="overlay-links" role="list">
+        {items.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              class="overlay-link type-heading"
+              {...(item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</div>
+
+<style>
+  /* ─── Overlay Container ─── */
+  .mobile-nav-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background-color: var(--overlay-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  /* Hidden state */
+  .mobile-nav-overlay[hidden] {
+    display: none;
+  }
+
+  /* Enter animation */
+  .mobile-nav-overlay.overlay-open {
+    animation: overlay-enter var(--duration-overlay-in) var(--ease-out-expo) forwards;
+  }
+
+  /* Exit animation */
+  .mobile-nav-overlay.overlay-closing {
+    animation: overlay-exit var(--duration-overlay-out) var(--ease-exit-fast) forwards;
+  }
+
+  /* ─── Overlay Content ─── */
+  .overlay-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: var(--space-2) var(--margin-mobile);
+  }
+
+  /* ─── Close Button ─── */
+  .overlay-close-btn {
+    align-self: flex-end;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    margin-top: var(--space-0-5);
+    color: var(--overlay-close);
+    background: none;
+    border: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .overlay-close-btn:hover {
+    color: var(--text-primary);
+  }
+
+  /* ─── Navigation Links ─── */
+  .overlay-nav {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .overlay-links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .overlay-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: var(--space-1) var(--space-3);
+    color: var(--overlay-link);
+    text-decoration: none;
+    transition:
+      color var(--duration-fast) var(--ease-standard);
+  }
+
+  .overlay-link:hover {
+    color: var(--text-accent);
+  }
+
+  /* ─── Desktop: never show ─── */
+  @media (min-width: 768px) {
+    .mobile-nav-overlay {
+      display: none !important;
+    }
+  }
+</style>

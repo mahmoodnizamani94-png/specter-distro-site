@@ -1,0 +1,304 @@
+---
+/**
+ * SPECTER SITE — Navigation Bar
+ *
+ * Fixed top navigation with transparent-to-solid scroll transition.
+ * Desktop: 64px height, logo left, section links right.
+ * Mobile: 56px height, logo left, hamburger right.
+ *
+ * JS-disabled fallback: all links visible inline, no hamburger.
+ * IntersectionObserver active-link wiring deferred to P4 —
+ * data-nav-link attributes provided for hookup.
+ *
+ * @see PRD §10.2, §18.5, §13.6
+ */
+
+import MobileNavOverlay from './MobileNavOverlay.astro';
+
+interface NavItem {
+  label: string;
+  href: string;
+  external?: boolean;
+}
+
+const NAV_ITEMS: NavItem[] = [
+  { label: 'Features', href: '#proof' },
+  { label: 'Download', href: '#download' },
+  { label: 'Dossier', href: '#dossier' },
+  { label: 'GitHub', href: 'https://github.com/', external: true },
+];
+---
+
+<header class="nav-header" id="site-nav" role="banner">
+  <nav class="nav-bar" aria-label="Main navigation">
+    <a href="/" class="nav-logo" aria-label="SPECTER home">
+      SPECTER
+    </a>
+
+    {/* Desktop nav links — hidden on mobile via CSS, visible as fallback when JS disabled */}
+    <ul class="nav-links" role="list">
+      {NAV_ITEMS.map((item) => (
+        <li>
+          <a
+            href={item.href}
+            class="nav-link type-label"
+            data-nav-link={item.href.replace('#', '')}
+            {...(item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+          >
+            {item.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    {/* Hamburger button — hidden when JS disabled via noscript style */}
+    <button
+      class="hamburger-btn"
+      type="button"
+      aria-label="Open navigation menu"
+      aria-expanded="false"
+      aria-controls="mobile-nav-overlay"
+      id="hamburger-btn"
+    >
+      {/* Three-line hamburger icon */}
+      <svg
+        class="hamburger-icon"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="square"
+        aria-hidden="true"
+      >
+        <line x1="4" y1="6" x2="20" y2="6" />
+        <line x1="4" y1="12" x2="20" y2="12" />
+        <line x1="4" y1="18" x2="20" y2="18" />
+      </svg>
+    </button>
+  </nav>
+</header>
+
+<MobileNavOverlay items={NAV_ITEMS} />
+
+<noscript>
+  <style>
+    .hamburger-btn { display: none !important; }
+    .nav-links { display: flex !important; }
+  </style>
+</noscript>
+
+<script>
+  // ─── Nav scroll solidify ───
+  const nav = document.getElementById('site-nav');
+  const SCROLL_THRESHOLD = 60;
+
+  function updateNavState(): void {
+    if (!nav) return;
+    if (window.scrollY >= SCROLL_THRESHOLD) {
+      nav.classList.add('nav-scrolled');
+    } else {
+      nav.classList.remove('nav-scrolled');
+    }
+  }
+
+  // Passive scroll listener for scroll-driven background transition
+  window.addEventListener('scroll', updateNavState, { passive: true });
+  // Set initial state
+  updateNavState();
+
+  // ─── Hamburger toggle ───
+  const hamburgerBtn = document.getElementById('hamburger-btn');
+  const overlay = document.getElementById('mobile-nav-overlay');
+
+  function openOverlay(): void {
+    if (!overlay || !hamburgerBtn) return;
+    overlay.classList.add('overlay-open');
+    overlay.classList.remove('overlay-closing');
+    overlay.removeAttribute('hidden');
+    hamburgerBtn.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+
+    // Focus the close button for keyboard users
+    const closeBtn = document.getElementById('overlay-close-btn');
+    closeBtn?.focus();
+  }
+
+  function closeOverlay(): void {
+    if (!overlay || !hamburgerBtn) return;
+
+    overlay.classList.add('overlay-closing');
+    overlay.classList.remove('overlay-open');
+    hamburgerBtn.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+
+    // Wait for exit animation to complete before hiding
+    const handleAnimationEnd = (): void => {
+      overlay.setAttribute('hidden', '');
+      overlay.classList.remove('overlay-closing');
+      overlay.removeEventListener('animationend', handleAnimationEnd);
+    };
+
+    overlay.addEventListener('animationend', handleAnimationEnd, { once: true });
+
+    // Fallback: if animation doesn't fire (reduced motion), hide immediately
+    const fallbackId = setTimeout(() => {
+      if (overlay.classList.contains('overlay-closing')) {
+        overlay.setAttribute('hidden', '');
+        overlay.classList.remove('overlay-closing');
+      }
+    }, 300);
+
+    overlay.addEventListener('animationend', () => clearTimeout(fallbackId), { once: true });
+
+    // Return focus to hamburger button
+    hamburgerBtn.focus();
+  }
+
+  hamburgerBtn?.addEventListener('click', () => {
+    const isOpen = hamburgerBtn.getAttribute('aria-expanded') === 'true';
+    if (isOpen) {
+      closeOverlay();
+    } else {
+      openOverlay();
+    }
+  });
+
+  // Close on overlay link clicks
+  overlay?.querySelectorAll('.overlay-link').forEach((link) => {
+    link.addEventListener('click', closeOverlay);
+  });
+
+  // Close button inside overlay
+  const closeBtn = document.getElementById('overlay-close-btn');
+  closeBtn?.addEventListener('click', closeOverlay);
+
+  // Close on Escape key
+  document.addEventListener('keydown', (e: KeyboardEvent) => {
+    if (e.key === 'Escape' && overlay?.classList.contains('overlay-open')) {
+      closeOverlay();
+    }
+  });
+</script>
+
+<style>
+  /* ─── Nav Header ─── */
+  .nav-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background-color: var(--nav-bg-transparent);
+    transition:
+      background-color var(--duration-medium) var(--ease-standard),
+      backdrop-filter var(--duration-medium) var(--ease-standard),
+      -webkit-backdrop-filter var(--duration-medium) var(--ease-standard);
+  }
+
+  .nav-header.nav-scrolled {
+    background-color: var(--nav-bg-scrolled);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  /* ─── Nav Bar ─── */
+  .nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--nav-height-desktop);
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: 0 var(--margin-desktop);
+  }
+
+  /* ─── Logo ─── */
+  .nav-logo {
+    font-family: var(--font-display);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--type-size-subheading);
+    line-height: 1;
+    color: var(--nav-logo);
+    letter-spacing: -0.01em;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .nav-logo:hover {
+    color: var(--color-phosphor-200);  /* Signature hue — stays green intentionally */
+  }
+
+  /* ─── Desktop Nav Links ─── */
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+  }
+
+  .nav-link {
+    color: var(--nav-link-default);
+    text-decoration: none;
+    padding: var(--space-1) var(--space-0-5);
+    transition:
+      color var(--duration-fast) var(--ease-standard);
+  }
+
+  .nav-link:hover {
+    color: var(--nav-link-hover);
+  }
+
+  /* Active state class — applied by IntersectionObserver */
+  .nav-link[aria-current="page"] {
+    color: var(--nav-link-active);
+  }
+
+  /* ─── Hamburger Button ─── */
+  .hamburger-btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    color: var(--text-secondary);
+    background: none;
+    border: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .hamburger-btn:hover {
+    color: var(--text-primary);
+  }
+
+  .hamburger-icon {
+    display: block;
+    pointer-events: none;
+  }
+
+  /* ─── Responsive ─── */
+
+  @media (max-width: 767px) {
+    .nav-bar {
+      height: var(--nav-height-mobile);
+      padding: 0 var(--margin-mobile);
+    }
+
+    .nav-links {
+      /* Hidden on mobile — overlay takes over when JS is available */
+      display: none;
+    }
+
+    .hamburger-btn {
+      display: flex;
+    }
+  }
+
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .nav-bar {
+      padding: 0 var(--margin-tablet);
+    }
+  }
+</style>

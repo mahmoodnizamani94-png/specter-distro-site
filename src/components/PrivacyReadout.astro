@@ -1,0 +1,138 @@
+---
+/**
+ * SPECTER SITE — Privacy Readout
+ *
+ * Three privacy guarantees as terminal-style status readouts.
+ * Each readout: filled square indicator + label + status + description.
+ * Screen-reader accessible with proper semantics.
+ *
+ * @see PRD §FR-06 Privacy Section
+ */
+
+const PRIVACY_GUARANTEES = [
+  {
+    id: 'privacy-network',
+    label: 'NETWORK ACCESS',
+    status: 'DENIED',
+    description: 'No data transmitted during transcription',
+  },
+  {
+    id: 'privacy-cloud',
+    label: 'CLOUD STORAGE',
+    status: 'DISABLED',
+    description: 'All processing on-device',
+  },
+  {
+    id: 'privacy-tracking',
+    label: 'USER TRACKING',
+    status: 'INACTIVE',
+    description: 'No analytics, no telemetry, no cookies',
+  },
+];
+---
+
+<div class="privacy-section">
+  <h2 class="privacy-heading type-heading" id="privacy-heading">Privacy guarantees</h2>
+
+  <div class="privacy-readouts" role="list">
+    {PRIVACY_GUARANTEES.map((g) => (
+      <div class="privacy-readout" role="listitem" id={g.id} aria-label={`${g.label}: ${g.status}. ${g.description}`}>
+        <div class="readout-header">
+          <span class="readout-indicator" aria-hidden="true">&#9632;</span>
+          <span class="readout-label type-code">{g.label}</span>
+          <span class="readout-status type-code">{g.status}</span>
+        </div>
+        <p class="readout-description type-body">{g.description}</p>
+      </div>
+    ))}
+  </div>
+
+  <p class="privacy-summary type-body">
+    SPECTER operates entirely within your device boundary. No network connections
+    are made during transcription. Audio data never leaves the phone. There are no
+    user accounts, no usage analytics, and no third-party SDKs.
+  </p>
+</div>
+
+<style>
+  .privacy-section {
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: 0 var(--margin-desktop);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .privacy-heading {
+    color: var(--text-primary);
+  }
+
+  .privacy-readouts {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .privacy-readout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-0-5);
+    padding: var(--space-2) var(--space-3);
+    background-color: var(--surface-raised);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sharp);
+  }
+
+  .readout-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+
+  .readout-indicator {
+    color: var(--privacy-indicator);
+    font-size: var(--type-size-code);
+    line-height: 1;
+  }
+
+  .readout-label {
+    color: var(--privacy-label);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.06em;
+  }
+
+  .readout-status {
+    color: var(--privacy-status);
+    font-weight: var(--font-weight-bold);
+  }
+
+  .readout-description {
+    color: var(--privacy-description);
+    padding-left: calc(var(--type-size-code) + var(--space-2));
+  }
+
+  .privacy-summary {
+    color: var(--text-secondary);
+    margin-top: var(--space-2);
+  }
+
+  /* ─── Tablet ─── */
+  @media (max-width: 1023px) {
+    .privacy-section {
+      padding: 0 var(--margin-tablet);
+    }
+  }
+
+  /* ─── Mobile ─── */
+  @media (max-width: 767px) {
+    .privacy-section {
+      padding: 0 var(--margin-mobile);
+    }
+
+    .readout-description {
+      padding-left: 0;
+    }
+  }
+</style>

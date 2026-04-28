@@ -1,0 +1,419 @@
+/* ═══════════════════════════════════════════════════════════
+   SIGNAL v2.0 — SPECTER SITE Design Token System
+   Color Space: OKLCH
+   Primary Accent: Spectra (violet, H:280)
+   Signature Accent: Phosphor (green, H:152)
+   Version: 2.0.0
+
+   Three-layer architecture:
+     Primitive → Semantic → Component
+   This file flattens all three layers into CSS custom properties
+   for direct deployment.
+
+   Contrast notes use ΔL (OKLCH lightness distance) ESTIMATES.
+   Validate with an external tool before shipping.
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+
+  /* ─── Primitive: Void (backgrounds) H:272 ─── */
+  --color-void-950: oklch(0.06  0.008 272);
+  --color-void-900: oklch(0.10  0.010 272);
+  --color-void-850: oklch(0.13  0.010 272);
+  --color-void-800: oklch(0.16  0.012 272);
+  --color-void-750: oklch(0.19  0.012 272);
+  --color-void-700: oklch(0.23  0.011 272);
+  --color-void-600: oklch(0.28  0.010 272);
+  --color-void-500: oklch(0.34  0.009 272);
+  --color-void-400: oklch(0.42  0.008 272);
+
+  /* ─── Primitive: Spectra (primary accent — violet) H:280 ─── */
+  --color-spectra-50:  oklch(0.96  0.02  280);
+  --color-spectra-100: oklch(0.92  0.04  280);
+  --color-spectra-200: oklch(0.85  0.08  280);
+  --color-spectra-300: oklch(0.76  0.14  280);
+  --color-spectra-400: oklch(0.66  0.18  280);
+  --color-spectra-500: oklch(0.56  0.19  280);
+  --color-spectra-600: oklch(0.48  0.18  280);
+  --color-spectra-700: oklch(0.40  0.15  280);
+  --color-spectra-800: oklch(0.32  0.11  280);
+  --color-spectra-900: oklch(0.24  0.07  280);
+
+  /* ─── Primitive: Phosphor (signature accent — green) H:152 ─── */
+  --color-phosphor-200: oklch(0.86  0.10  152);
+  --color-phosphor-300: oklch(0.76  0.15  152);
+  --color-phosphor-400: oklch(0.66  0.17  152);
+  --color-phosphor-500: oklch(0.56  0.15  152);
+  --color-phosphor-600: oklch(0.44  0.12  152);
+  --color-phosphor-700: oklch(0.32  0.08  152);
+
+  /* ─── Primitive: Scan (text/foreground) H:272 ─── */
+  --color-scan-50:  oklch(0.97  0.006 272);
+  --color-scan-100: oklch(0.93  0.010 272);
+  --color-scan-200: oklch(0.84  0.012 272);
+  --color-scan-300: oklch(0.72  0.012 272);
+  --color-scan-400: oklch(0.56  0.010 272);
+  --color-scan-500: oklch(0.42  0.008 272);
+  --color-scan-600: oklch(0.30  0.006 272);
+
+  /* ─── Primitive: Warning (gold) H:75 ─── */
+  --color-warning-300: oklch(0.82  0.12  75);
+  --color-warning-400: oklch(0.72  0.16  75);
+  --color-warning-500: oklch(0.58  0.14  75);
+
+  /* ─── Primitive: Info (cyan-blue) H:230 ─── */
+  --color-info-300: oklch(0.80  0.08  230);
+  --color-info-400: oklch(0.68  0.12  230);
+  --color-info-500: oklch(0.54  0.10  230);
+
+  /* ─── Primitive: Error (coral) H:25 ─── */
+  --color-error-300: oklch(0.80  0.10  25);
+  --color-error-400: oklch(0.68  0.16  25);
+  --color-error-500: oklch(0.54  0.14  25);
+
+  /* ─── Primitive: Success (teal-green) H:155 ─── */
+  --color-success-300: oklch(0.80  0.10  155);
+  --color-success-400: oklch(0.68  0.14  155);
+  --color-success-500: oklch(0.56  0.12  155);
+
+
+  /* ═══════════════════════════════════════════
+     Semantic Tokens
+     ═══════════════════════════════════════════ */
+
+  /* ─── Surfaces ─── */
+  --surface-base:     var(--color-void-950);
+  --surface-sunken:   var(--color-void-900);
+  --surface-raised:   var(--color-void-800);
+  --surface-overlay:  var(--color-void-750);
+  --surface-elevated: var(--color-void-700);
+
+  /* ─── Text ─── */
+  --text-primary:    var(--color-scan-100);   /* ΔL 0.87 on base — PASS AAA */
+  --text-secondary:  var(--color-scan-300);   /* ΔL 0.66 on base — PASS AA */
+  --text-muted:      var(--color-scan-400);   /* ΔL 0.50 on base — PASS AA large */
+  --text-disabled:   var(--color-scan-500);   /* ΔL 0.36 on base — PASS 3:1 min */
+  --text-accent:     var(--color-spectra-400);  /* ΔL 0.60 on base — PASS AA */
+  --text-accent-dim: var(--color-spectra-700);
+  --text-inverse:    var(--color-void-950);
+  --text-signature:  var(--color-phosphor-300); /* SPECTER identity green */
+
+  /* ─── Action: Primary ─── */
+  --action-primary-bg:          var(--color-spectra-400);
+  --action-primary-bg-hover:    var(--color-spectra-300);
+  --action-primary-bg-pressed:  var(--color-spectra-500);
+  --action-primary-bg-disabled: var(--color-spectra-800);
+  --action-primary-fg:          var(--color-void-950);    /* ΔL 0.60 on spectra-400 — PASS AA */
+  --action-primary-fg-disabled: var(--color-scan-400);
+
+  /* ─── Action: Secondary ─── */
+  --action-secondary-bg:           oklch(0 0 0 / 0);
+  --action-secondary-bg-hover:     var(--color-void-750);
+  --action-secondary-bg-pressed:   var(--color-void-700);
+  --action-secondary-border:       var(--color-spectra-600);
+  --action-secondary-border-hover: var(--color-spectra-400);
+  --action-secondary-fg:           var(--color-spectra-400);
+
+  /* ─── Action: Ghost ─── */
+  --action-ghost-bg-hover: var(--color-void-750);
+  --action-ghost-fg:       var(--color-scan-200);
+
+  /* ─── Feedback ─── */
+  --feedback-warning-surface: oklch(0.12 0.03 75);
+  --feedback-warning-border:  var(--color-warning-400);
+  --feedback-warning-text:    var(--color-warning-300);
+
+  --feedback-error-surface:   oklch(0.12 0.03 25);
+  --feedback-error-border:    var(--color-error-400);
+  --feedback-error-text:      var(--color-error-300);
+
+  --feedback-success-surface: oklch(0.12 0.03 155);
+  --feedback-success-border:  var(--color-success-400);
+  --feedback-success-text:    var(--color-success-300);
+
+  --feedback-info-surface:    oklch(0.12 0.03 230);
+  --feedback-info-border:     var(--color-info-400);
+  --feedback-info-text:       var(--color-info-300);
+
+  /* ─── Status ─── */
+  --status-active:   var(--color-spectra-400);
+  --status-complete: var(--color-success-400);
+
+  /* ─── Progress ─── */
+  --progress-track: var(--color-void-700);
+  --progress-fill:  var(--color-spectra-400);
+  --progress-glow:  var(--color-spectra-700);
+
+  /* ─── Border ─── */
+  --border-subtle:  var(--color-void-600);
+  --border-default: var(--color-void-500);
+  --border-active:  var(--color-spectra-600);
+  --border-focus:   var(--color-spectra-400);
+
+  /* ─── Focus ─── */
+  --focus-ring: var(--color-spectra-400);   /* ΔL 0.60 on base, 0.50 on raised — PASS */
+
+  /* ─── Overlay ─── */
+  --overlay-backdrop: oklch(0.02 0.006 272 / 0.85);
+  --overlay-scanline: oklch(0.0 0.0 0 / 0.03);
+
+
+  /* ═══════════════════════════════════════════
+     Component Tokens
+     ═══════════════════════════════════════════ */
+
+  /* ─── Button: Primary ─── */
+  --btn-primary-bg:          var(--action-primary-bg);
+  --btn-primary-bg-hover:    var(--action-primary-bg-hover);
+  --btn-primary-bg-pressed:  var(--action-primary-bg-pressed);
+  --btn-primary-bg-disabled: var(--action-primary-bg-disabled);
+  --btn-primary-fg:          var(--action-primary-fg);
+  --btn-primary-fg-disabled: var(--action-primary-fg-disabled);
+  --btn-primary-focus-ring:  var(--focus-ring);
+  --btn-primary-focus-gap:   var(--surface-base);
+  --btn-primary-radius:      2px;
+  --btn-primary-height:      56px;
+  --btn-primary-padding-x:   32px;
+  --btn-primary-min-width:   200px;
+
+  /* ─── Button: Secondary ─── */
+  --btn-secondary-bg:           var(--action-secondary-bg);
+  --btn-secondary-bg-hover:     var(--action-secondary-bg-hover);
+  --btn-secondary-bg-pressed:   var(--action-secondary-bg-pressed);
+  --btn-secondary-border:       var(--action-secondary-border);
+  --btn-secondary-border-hover: var(--action-secondary-border-hover);
+  --btn-secondary-fg:           var(--action-secondary-fg);
+  --btn-secondary-focus-ring:   var(--focus-ring);
+  --btn-secondary-radius:       2px;
+  --btn-secondary-height:       56px;
+
+  /* ─── Feature Card / Proof Item ─── */
+  --card-bg:           var(--surface-raised);
+  --card-bg-hover:     var(--surface-overlay);
+  --card-border:       var(--border-subtle);
+  --card-border-hover: var(--border-active);
+  --card-icon:         var(--text-accent);
+  --card-title:        var(--text-primary);
+  --card-description:  var(--text-secondary);
+  --card-radius:       2px;
+  --card-padding:      24px;
+
+  /* ─── Terminal Showcase ─── */
+  --terminal-bg:             var(--surface-sunken);
+  --terminal-title-bar-bg:   var(--surface-raised);
+  --terminal-title-text:     var(--text-muted);
+  --terminal-index:          var(--text-muted);
+  --terminal-timestamp:      var(--text-signature);
+  --terminal-arrow:          var(--color-phosphor-600);
+  --terminal-cue-text:       var(--text-secondary);
+  --terminal-progress-track: var(--progress-track);
+  --terminal-progress-fill:  var(--progress-fill);
+  --terminal-progress-glow:  var(--progress-glow);
+  --terminal-radius:         2px;
+  --terminal-padding:        24px;
+
+  /* ─── Navigation ─── */
+  --nav-bg-transparent: oklch(0 0 0 / 0);
+  --nav-bg-scrolled:    var(--surface-raised);
+  --nav-border-bottom:  var(--border-subtle);
+  --nav-logo:           var(--text-signature);
+  --nav-link-default:   var(--text-muted);
+  --nav-link-hover:     var(--text-primary);
+  --nav-link-active:    var(--text-accent);
+  --nav-height-desktop: 64px;
+  --nav-height-mobile:  56px;
+
+  /* ─── Mobile Overlay ─── */
+  --overlay-bg:    var(--surface-overlay);
+  --overlay-link:  var(--text-primary);
+  --overlay-close: var(--text-muted);
+
+  /* ─── Specs Table ─── */
+  --specs-bg:        var(--surface-sunken);
+  --specs-header:    var(--text-accent);
+  --specs-data:      var(--text-secondary);
+  --specs-separator: var(--border-subtle);
+  --specs-radius:    2px;
+  --specs-padding:   24px;
+
+  /* ─── Privacy Readout ─── */
+  --privacy-indicator:   var(--color-success-400);
+  --privacy-label:       var(--text-primary);
+  --privacy-status:      var(--text-accent);
+  --privacy-description: var(--text-secondary);
+
+  /* ─── Download Panel ─── */
+  --download-bg:              var(--surface-raised);
+  --download-border:          var(--border-default);
+  --download-version-text:    var(--text-accent);
+  --download-metadata-text:   var(--text-secondary);
+  --download-checksum-text:   var(--text-accent);
+  --download-warning-bg:      var(--feedback-warning-surface);
+  --download-warning-border:  var(--feedback-warning-border);
+  --download-warning-text:    var(--feedback-warning-text);
+  --download-unavailable-text: var(--text-muted);
+  --download-radius:          2px;
+  --download-padding:         32px;
+
+  /* ─── Release Radar ─── */
+  --radar-bg:           var(--surface-sunken);
+  --radar-border:       var(--color-phosphor-600);
+  --radar-ring:         var(--color-phosphor-500);
+  --radar-sweep:        var(--text-signature);
+  --radar-center-text:  var(--text-signature);
+  --radar-readout-text: var(--text-secondary);
+  --radar-label:        var(--text-muted);
+
+  /* ─── Footer ─── */
+  --footer-bg:         var(--surface-raised);
+  --footer-border-top: var(--border-subtle);
+  --footer-text:       var(--text-muted);
+  --footer-link:       var(--text-secondary);
+  --footer-link-hover: var(--text-accent);
+
+  /* ─── FAQ ─── */
+  --faq-question:    var(--text-primary);
+  --faq-answer:      var(--text-secondary);
+  --faq-toggle:      var(--text-muted);
+  --faq-border:      var(--border-subtle);
+
+  /* ─── 404 ─── */
+  --four-oh-four-bg:    var(--surface-base);
+  --four-oh-four-title: var(--text-accent);
+  --four-oh-four-body:  var(--text-secondary);
+  --four-oh-four-link:  var(--text-accent);
+
+
+  /* ═══════════════════════════════════════════
+     Typography
+     ═══════════════════════════════════════════ */
+
+  --font-display: 'Syne', system-ui, sans-serif;
+  --font-body:    'Source Sans 3', system-ui, sans-serif;
+  --font-code:    'JetBrains Mono', 'Courier New', monospace;
+
+  --font-weight-regular:  400;
+  --font-weight-medium:   500;
+  --font-weight-semibold: 600;
+  --font-weight-bold:     700;
+
+  --type-size-display:    clamp(36px, 6vw, 72px);
+  --type-size-heading:    clamp(24px, 4vw, 40px);
+  --type-size-subheading: clamp(18px, 3vw, 28px);
+  --type-size-body:       clamp(15px, 2.5vw, 18px);
+  --type-size-label:      clamp(11px, 1.8vw, 13px);
+  --type-size-caption:    clamp(11px, 1.5vw, 13px);
+  --type-size-code:       clamp(13px, 2vw, 15px);
+
+  --line-height-display:    0.92;
+  --line-height-heading:    1.05;
+  --line-height-subheading: 1.2;
+  --line-height-body:       1.65;
+  --line-height-label:      1.3;
+  --line-height-caption:    1.35;
+  --line-height-code:       1.5;
+
+
+  /* ═══════════════════════════════════════════
+     Spacing
+     ═══════════════════════════════════════════ */
+
+  --space-0-5: 4px;
+  --space-1:   8px;
+  --space-1-5: 12px;
+  --space-2:   16px;
+  --space-3:   24px;
+  --space-4:   32px;
+  --space-6:   48px;
+  --space-8:   64px;
+  --space-12:  96px;
+  --space-16:  128px;
+
+  --margin-mobile:  16px;
+  --margin-tablet:  32px;
+  --margin-desktop: 48px;
+
+  --content-max-width: 1200px;
+  --text-max-width:    65ch;
+
+
+  /* ═══════════════════════════════════════════
+     Radius
+     ═══════════════════════════════════════════ */
+
+  --radius-none:  0px;
+  --radius-sharp: 2px;
+  --radius-soft:  4px;
+
+
+  /* ═══════════════════════════════════════════
+     Motion
+     ═══════════════════════════════════════════ */
+
+  --duration-instant:    100ms;
+  --duration-fast:       150ms;
+  --duration-medium:     200ms;
+  --duration-slow:       280ms;
+  --duration-hero:       1200ms;
+  --duration-radar:      3000ms;
+  --duration-drift:      4000ms;
+  --duration-overlay-in: 280ms;
+  --duration-overlay-out: 200ms;
+
+  --ease-enter:     cubic-bezier(0.0, 0.0, 0.2, 1.0);
+  --ease-exit:      cubic-bezier(0.4, 0.0, 1.0, 1.0);
+  --ease-standard:  cubic-bezier(0.4, 0.0, 0.2, 1.0);
+  --ease-out-expo:  cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-exit-fast: cubic-bezier(0.7, 0, 1, 1);
+
+}
+
+
+/* ═══════════════════════════════════════════
+   Adaptive: High Contrast
+   ═══════════════════════════════════════════ */
+
+@media (prefers-contrast: more) {
+  :root {
+    --border-subtle:  var(--color-void-400);
+    --border-default: var(--color-void-400);
+    --text-secondary: oklch(0.78 0.010 272);
+    --overlay-scanline: oklch(0.0 0.0 0 / 0.06);
+  }
+}
+
+
+/* ═══════════════════════════════════════════
+   Adaptive: Forced Colors (Windows High Contrast)
+   ═══════════════════════════════════════════ */
+
+@media (forced-colors: active) {
+  :root {
+    --surface-base:    Canvas;
+    --surface-raised:  Canvas;
+    --surface-sunken:  Canvas;
+    --text-primary:    CanvasText;
+    --text-secondary:  CanvasText;
+    --text-muted:      GrayText;
+    --text-accent:     LinkText;
+    --text-signature:  LinkText;
+    --action-primary-bg: ButtonFace;
+    --action-primary-fg: ButtonText;
+    --border-subtle:   CanvasText;
+    --border-default:  CanvasText;
+    --focus-ring:      Highlight;
+  }
+}
+
+
+/* ═══════════════════════════════════════════
+   Progressive Enhancement: Relative Color Syntax
+   ═══════════════════════════════════════════ */
+
+@supports (color: oklch(from white l c h)) {
+  :root {
+    --action-primary-bg-hover:   oklch(from var(--color-spectra-400) calc(l + 0.10) c h);
+    --action-primary-bg-pressed: oklch(from var(--color-spectra-400) calc(l - 0.10) c h);
+    --action-secondary-bg-hover: oklch(from var(--color-void-750) l c h);
+  }
+}

@@ -1,0 +1,110 @@
+---
+/**
+ * SPECTER SITE — 404 Page
+ *
+ * Terminal-style not-found recovery page.
+ * Uses BaseLayout for consistent meta, fonts, CSP, and skip-link.
+ *
+ * @see PRD §12.FR-12
+ */
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="404 — Signal Not Found | SPECTER"
+  description="The requested resource does not exist in this system."
+>
+  <section class="four-oh-four" aria-label="Page not found">
+    <div class="four-oh-four-container">
+      <p class="four-oh-four-prompt type-code" aria-hidden="true">&gt;</p>
+      <h1 class="four-oh-four-title type-heading">SIGNAL NOT FOUND</h1>
+      <p class="four-oh-four-body type-body">
+        The requested resource does not exist in this system.
+      </p>
+      <nav class="four-oh-four-nav" aria-label="Recovery navigation">
+        <a href="/" class="four-oh-four-link type-label">
+          Return to command surface
+        </a>
+        <a
+          href="https://github.com/"
+          class="four-oh-four-link four-oh-four-link--secondary type-label"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          View releases
+        </a>
+      </nav>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .four-oh-four {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100dvh;
+    background-color: var(--four-oh-four-bg);
+    padding: var(--space-3) var(--margin-mobile);
+  }
+
+  .four-oh-four-container {
+    max-width: 560px;
+    width: 100%;
+  }
+
+  .four-oh-four-prompt {
+    color: var(--text-accent);
+    margin-bottom: var(--space-1);
+    font-size: var(--type-size-subheading);
+  }
+
+  .four-oh-four-title {
+    color: var(--four-oh-four-title);
+    margin-bottom: var(--space-3);
+  }
+
+  .four-oh-four-body {
+    color: var(--four-oh-four-body);
+    margin-bottom: var(--space-6);
+  }
+
+  .four-oh-four-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .four-oh-four-link {
+    color: var(--four-oh-four-link);
+    text-decoration: none;
+    padding: var(--space-1) 0;
+    border-bottom: 1px solid var(--border-subtle);
+    transition:
+      color var(--duration-fast) var(--ease-standard),
+      border-color var(--duration-fast) var(--ease-standard);
+  }
+
+  .four-oh-four-link:hover {
+    color: var(--color-spectra-300);
+    border-color: var(--border-focus);
+  }
+
+  .four-oh-four-link--secondary {
+    color: var(--text-secondary);
+    border-color: var(--border-subtle);
+  }
+
+  .four-oh-four-link--secondary:hover {
+    color: var(--text-primary);
+    border-color: var(--border-default);
+  }
+
+  @media (max-width: 639px) {
+    .four-oh-four-nav {
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+  }
+</style>

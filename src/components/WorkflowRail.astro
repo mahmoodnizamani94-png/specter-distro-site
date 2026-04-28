@@ -1,0 +1,123 @@
+---
+/**
+ * SPECTER SITE — Workflow Rail
+ *
+ * Three-step sequential terminal rail: IMPORT → PROCESS → EXPORT.
+ * Step numbers and process names in JetBrains Mono.
+ * Connecting lines between steps visualize the sequence.
+ *
+ * @see PRD §FR-03 Workflow Section
+ */
+
+import { WORKFLOW_STEPS } from '../content/features';
+---
+
+<div class="workflow-rail">
+  <h2 class="workflow-heading type-heading" id="workflow-heading">How it works</h2>
+
+  <div class="workflow-steps" role="list">
+    {WORKFLOW_STEPS.map((step, i) => (
+      <div class="workflow-step" role="listitem">
+        <div class="step-indicator">
+          <span class="step-number type-code">[{step.index}]</span>
+          {i < WORKFLOW_STEPS.length - 1 && (
+            <div class="step-connector" aria-hidden="true"></div>
+          )}
+        </div>
+        <div class="step-content">
+          <p class="step-title type-code">{step.title}</p>
+          <p class="step-description type-body">{step.description}</p>
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
+
+<style>
+  .workflow-rail {
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: 0 var(--margin-desktop);
+  }
+
+  .workflow-heading {
+    color: var(--text-primary);
+    margin-bottom: var(--space-6);
+  }
+
+  .workflow-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .workflow-step {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .step-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    width: 56px;
+  }
+
+  .step-number {
+    color: var(--text-accent);
+    font-weight: var(--font-weight-bold);
+    white-space: nowrap;
+    padding: var(--space-0-5) 0;
+  }
+
+  .step-connector {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(
+      to bottom,
+      var(--text-accent-dim),
+      var(--border-subtle)
+    );
+    flex-shrink: 0;
+  }
+
+  .step-content {
+    padding-top: var(--space-0-5);
+    padding-bottom: var(--space-4);
+  }
+
+  .step-title {
+    color: var(--text-primary);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.08em;
+    margin-bottom: var(--space-0-5);
+  }
+
+  .step-description {
+    color: var(--text-secondary);
+  }
+
+  /* ─── Mobile ─── */
+  @media (max-width: 767px) {
+    .workflow-rail {
+      padding: 0 var(--margin-mobile);
+    }
+
+    .step-indicator {
+      width: 48px;
+    }
+
+    .step-connector {
+      height: 32px;
+    }
+  }
+
+  /* ─── Tablet ─── */
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .workflow-rail {
+      padding: 0 var(--margin-tablet);
+    }
+  }
+</style>

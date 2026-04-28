@@ -1,0 +1,67 @@
+---
+/**
+ * SPECTER SITE — Proof Strip
+ *
+ * Four proof tokens displayed as terminal-style inline readouts.
+ * Layout: horizontal row (desktop), 2×2 grid (tablet), vertical stack (mobile).
+ *
+ * @see PRD §FR-02 Proof Strip
+ */
+
+import { PROOF_TOKENS } from '../content/features';
+---
+
+<div class="proof-strip">
+  {PROOF_TOKENS.map((token) => (
+    <div class="proof-item" id={token.id}>
+      <p class="proof-title type-label">{token.title}</p>
+      <p class="proof-description type-body">{token.description}</p>
+    </div>
+  ))}
+</div>
+
+<style>
+  .proof-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-2);
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: 0 var(--margin-desktop);
+  }
+
+  .proof-item {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--card-radius);
+    padding: var(--card-padding);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .proof-title {
+    color: var(--card-title);
+  }
+
+  .proof-description {
+    color: var(--card-description);
+    max-width: none;
+  }
+
+  /* ─── Tablet: 2×2 ─── */
+  @media (max-width: 1023px) {
+    .proof-strip {
+      grid-template-columns: repeat(2, 1fr);
+      padding: 0 var(--margin-tablet);
+    }
+  }
+
+  /* ─── Mobile: vertical stack ─── */
+  @media (max-width: 767px) {
+    .proof-strip {
+      grid-template-columns: 1fr;
+      padding: 0 var(--margin-mobile);
+    }
+  }
+</style>

@@ -1,0 +1,275 @@
+/* ═══════════════════════════════════════════════════════════
+   SPECTER SITE — Animation Catalog
+   Every @keyframes from PRD §16.2.
+   Components reference these keyframes + timing tokens
+   from variables.css. This file defines shapes only.
+
+   Reduced motion is handled globally in global.css.
+   ═══════════════════════════════════════════════════════════ */
+
+
+/* ─── text-decrypt ───
+   Hero title text decryption effect.
+   Characters cycle through random glyphs then resolve.
+   Orchestrated per-character via JS with 80ms stagger.
+   Total duration: var(--duration-hero) = 1200ms.
+   Individual char resolves with this opacity keyframe. */
+
+@keyframes text-decrypt {
+  0% {
+    opacity: 0;
+    filter: blur(4px);
+  }
+  40% {
+    opacity: 1;
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+
+/* ─── phosphor-pulse ───
+   CTA hover + logotype resolve glow.
+   Duration: 300ms.
+   Easing: var(--ease-enter) — cubic-bezier(0, 0, 0.2, 1) */
+
+@keyframes phosphor-pulse {
+  0% {
+    box-shadow: 0 0 0 0 var(--color-spectra-400);
+  }
+  30% {
+    box-shadow: 0 0 24px 4px var(--color-spectra-700);
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+
+/* ─── radar-sweep ───
+   Hero release radar sweep line.
+   Duration: var(--duration-radar) = 3000ms/rev.
+   Easing: linear (sweep only — continuous rotation). */
+
+@keyframes radar-sweep {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* ─── scan-enter ───
+   Section viewport entrance animation.
+   Duration: 220ms.
+   Easing: var(--ease-out-expo) — cubic-bezier(0.16, 1, 0.3, 1) */
+
+@keyframes scan-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* ─── scan-line-drift ───
+   Continuous hero scan-line overlay vertical drift.
+   Duration: var(--duration-drift) = 4000ms loop.
+   Easing: linear (continuous drift). */
+
+@keyframes scan-line-drift {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(50px);
+  }
+}
+
+
+/* ─── progress-fill ───
+   Showcase terminal progress bar fill.
+   Continuous left-to-right advance with leading-edge glow.
+   Easing: linear (progress). */
+
+@keyframes progress-fill {
+  0% {
+    width: 0%;
+    box-shadow: 0 0 8px 0 var(--progress-glow);
+  }
+  100% {
+    width: 100%;
+    box-shadow: 0 0 12px 2px var(--progress-glow);
+  }
+}
+
+
+/* ─── segment-reveal ───
+   Showcase terminal new SRT line appearance.
+   Duration: 150ms.
+   Easing: var(--ease-out-expo) — cubic-bezier(0.16, 1, 0.3, 1) */
+
+@keyframes segment-reveal {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* ─── nav-solidify ───
+   Nav background transition from transparent to solid.
+   Duration: var(--duration-medium) = 200ms.
+   Easing: var(--ease-standard) — cubic-bezier(0.4, 0, 0.2, 1)
+   Note: This is functional state feedback, preserved under reduced motion. */
+
+@keyframes nav-solidify {
+  0% {
+    background-color: var(--nav-bg-transparent);
+    backdrop-filter: blur(0);
+  }
+  100% {
+    background-color: var(--nav-bg-scrolled);
+    backdrop-filter: blur(12px);
+  }
+}
+
+
+/* ─── card-entrance ───
+   Content card/item staggered viewport entrance.
+   Duration: 200ms per item, staggered 40ms.
+   Easing: var(--ease-out-expo) — cubic-bezier(0.16, 1, 0.3, 1) */
+
+@keyframes card-entrance {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* ─── overlay-enter ───
+   Mobile nav overlay entrance.
+   Duration: var(--duration-overlay-in) = 280ms.
+   Easing: var(--ease-out-expo) — cubic-bezier(0.16, 1, 0.3, 1) */
+
+@keyframes overlay-enter {
+  0% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+
+/* ─── overlay-exit ───
+   Mobile nav overlay dismissal.
+   Duration: var(--duration-overlay-out) = 200ms.
+   Easing: var(--ease-exit-fast) — cubic-bezier(0.7, 0, 1, 1) */
+
+@keyframes overlay-exit {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+
+/* ─── hover-glow ───
+   Button/link hover glow expansion.
+   Duration: 160ms.
+   Easing: ease-out (specified as named in PRD — acceptable for micro-interaction). */
+
+@keyframes hover-glow {
+  0% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+  100% {
+    box-shadow: 0 0 24px 0 var(--color-spectra-700);
+  }
+}
+
+
+/* ─── data-decrypt ───
+   Release metadata line-by-line reveal.
+   Duration: 180ms per line.
+   Stepped opacity for verification communication. */
+
+@keyframes data-decrypt {
+  0% {
+    opacity: 0;
+    filter: blur(2px);
+  }
+  50% {
+    opacity: 0.6;
+    filter: blur(1px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+
+/* ─── error-shake ───
+   Broken/unavailable release indicator.
+   Duration: 260ms.
+   Max 3 cycles — controlled via animation-iteration-count. */
+
+@keyframes error-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-3px);
+  }
+  40% {
+    transform: translateX(3px);
+  }
+  60% {
+    transform: translateX(-3px);
+  }
+  80% {
+    transform: translateX(3px);
+  }
+}
+
+
+/* ─── Phosphor glow pulse (hero title ambient) ───
+   Faint green drop-shadow pulsing at 4s interval.
+   Referenced in PRD §FR-01. */
+
+@keyframes phosphor-glow-ambient {
+  0%,
+  100% {
+    text-shadow: 0 0 0 transparent;
+  }
+  50% {
+    text-shadow: 0 0 40px var(--color-phosphor-700);
+  }
+}

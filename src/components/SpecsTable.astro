@@ -1,0 +1,205 @@
+---
+/**
+ * SPECTER SITE — Technical Specifications
+ *
+ * Terminal-formatted spec tables:
+ * 1. Supported Formats (audio, video, archive, output)
+ * 2. AI Models (tiny/base/small/medium with specs)
+ * 3. System Requirements
+ *
+ * All in JetBrains Mono. Semantic table markup for accessibility.
+ *
+ * @see PRD §FR-05 Specifications Section
+ */
+
+// ─── Supported Formats Data ───
+const FORMATS = {
+  audio: ['MP3', 'WAV', 'AAC', 'OGG', 'FLAC', 'WMA', 'M4A', 'OPUS'],
+  video: ['MP4', 'MKV', 'AVI', 'MOV', 'WEBM', 'FLV', 'WMV', '3GP'],
+  archive: ['ZIP'],
+  output: ['SRT'],
+};
+
+// ─── AI Models Data ───
+const MODELS = [
+  { model: 'tiny', size: '~75 MB', ram: '~1 GB', speed: 'Fastest', tier: 'Basic' },
+  { model: 'base', size: '~150 MB', ram: '~1.5 GB', speed: 'Fast', tier: 'Standard' },
+  { model: 'small', size: '~500 MB', ram: '~2.5 GB', speed: 'Moderate', tier: 'Quality' },
+  { model: 'medium', size: '~1.5 GB', ram: '~4 GB', speed: 'Slow', tier: 'High' },
+];
+
+// ─── System Requirements Data ───
+const REQUIREMENTS = [
+  { label: 'Platform', value: 'Android 8.0+ (API 26)' },
+  { label: 'Storage', value: '200 MB + model size' },
+  { label: 'RAM', value: '2 GB minimum (4 GB+ recommended)' },
+  { label: 'Processor', value: 'ARM64 (64-bit required)' },
+];
+---
+
+<div class="specs-section">
+  <h2 class="specs-heading type-heading" id="specs-heading">Technical specifications</h2>
+
+  {/* Supported Formats */}
+  <div class="specs-table-wrapper">
+    <h3 class="specs-table-title type-code">SUPPORTED_FORMATS</h3>
+    <div class="specs-table-scroll">
+      <table class="specs-table" aria-label="Supported file formats">
+        <thead>
+          <tr>
+            <th class="specs-th type-code">TYPE</th>
+            <th class="specs-th type-code">FORMATS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="specs-td type-code">Audio</td>
+            <td class="specs-td type-code">{FORMATS.audio.join('  ')}</td>
+          </tr>
+          <tr>
+            <td class="specs-td type-code">Video</td>
+            <td class="specs-td type-code">{FORMATS.video.join('  ')}</td>
+          </tr>
+          <tr>
+            <td class="specs-td type-code">Archive</td>
+            <td class="specs-td type-code">{FORMATS.archive.join('  ')}</td>
+          </tr>
+          <tr>
+            <td class="specs-td type-code">Output</td>
+            <td class="specs-td type-code">{FORMATS.output.join('  ')}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {/* AI Models */}
+  <div class="specs-table-wrapper">
+    <h3 class="specs-table-title type-code">AI_MODELS</h3>
+    <div class="specs-table-scroll">
+      <table class="specs-table" aria-label="AI model specifications">
+        <thead>
+          <tr>
+            <th class="specs-th type-code">MODEL</th>
+            <th class="specs-th type-code">SIZE</th>
+            <th class="specs-th type-code">RAM</th>
+            <th class="specs-th type-code">SPEED</th>
+            <th class="specs-th type-code">TIER</th>
+          </tr>
+        </thead>
+        <tbody>
+          {MODELS.map((m) => (
+            <tr>
+              <td class="specs-td type-code">{m.model}</td>
+              <td class="specs-td type-code tnum">{m.size}</td>
+              <td class="specs-td type-code tnum">{m.ram}</td>
+              <td class="specs-td type-code">{m.speed}</td>
+              <td class="specs-td type-code">{m.tier}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {/* System Requirements */}
+  <div class="specs-table-wrapper">
+    <h3 class="specs-table-title type-code">SYSTEM_REQUIREMENTS</h3>
+    <div class="specs-table-scroll">
+      <table class="specs-table" aria-label="System requirements">
+        <thead>
+          <tr>
+            <th class="specs-th type-code">PARAMETER</th>
+            <th class="specs-th type-code">REQUIREMENT</th>
+          </tr>
+        </thead>
+        <tbody>
+          {REQUIREMENTS.map((r) => (
+            <tr>
+              <td class="specs-td type-code">{r.label}</td>
+              <td class="specs-td type-code">{r.value}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<style>
+  .specs-section {
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: 0 var(--margin-desktop);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .specs-heading {
+    color: var(--text-primary);
+  }
+
+  .specs-table-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .specs-table-title {
+    color: var(--specs-header);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.04em;
+  }
+
+  .specs-table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .specs-table {
+    width: 100%;
+    background-color: var(--specs-bg);
+    border: 1px solid var(--specs-separator);
+    border-radius: var(--specs-radius);
+  }
+
+  .specs-th {
+    color: var(--specs-header);
+    font-weight: var(--font-weight-semibold);
+    text-align: left;
+    padding: var(--space-1-5) var(--space-3);
+    border-bottom: 1px solid var(--specs-separator);
+    white-space: nowrap;
+  }
+
+  .specs-td {
+    color: var(--specs-data);
+    padding: var(--space-1) var(--space-3);
+    border-bottom: 1px solid var(--specs-separator);
+    white-space: nowrap;
+  }
+
+  .specs-table tbody tr:last-child .specs-td {
+    border-bottom: none;
+  }
+
+  /* ─── Tablet ─── */
+  @media (max-width: 1023px) {
+    .specs-section {
+      padding: 0 var(--margin-tablet);
+    }
+  }
+
+  /* ─── Mobile ─── */
+  @media (max-width: 767px) {
+    .specs-section {
+      padding: 0 var(--margin-mobile);
+    }
+
+    .specs-th,
+    .specs-td {
+      padding: var(--space-1) var(--space-2);
+    }
+  }
+</style>

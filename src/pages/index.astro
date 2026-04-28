@@ -1,0 +1,302 @@
+---
+/**
+ * SPECTER SITE — Index Page
+ *
+ * Single-page site with nine content sections + footer.
+ * All sections rendered in semantic <section> elements with
+ * scroll-driven reveals and active nav highlighting.
+ *
+ * React islands:
+ *   - ReleaseRadar (client:visible) — hero radar display
+ *   - TerminalShowcase (client:visible) — SRT output simulation
+ *   - DownloadPanel (client:load) — release-state CTA resolver
+ *
+ * @see PRD §10.1 Page Structure
+ */
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HeroSection from '../components/HeroSection.astro';
+import ReleaseRadar from '../components/ReleaseRadar.tsx';
+import ProofStrip from '../components/ProofStrip.astro';
+import WorkflowRail from '../components/WorkflowRail.astro';
+import TerminalShowcase from '../components/TerminalShowcase.tsx';
+import SpecsTable from '../components/SpecsTable.astro';
+import PrivacyReadout from '../components/PrivacyReadout.astro';
+import DownloadPanel from '../components/DownloadPanel.tsx';
+import DossierPreview from '../components/DossierPreview.astro';
+import FAQAccordion from '../components/FAQAccordion.astro';
+import Footer from '../components/Footer.astro';
+
+import { RELEASE } from '../content/release';
+---
+
+<BaseLayout>
+  <h1 class="sr-only">SPECTER — Offline AI Subtitle Generator for Android</h1>
+
+  {/* ─── Hero ─── */}
+  <section id="hero" aria-labelledby="hero-title">
+    <HeroSection>
+      <ReleaseRadar slot="radar" client:visible release={RELEASE} />
+    </HeroSection>
+  </section>
+
+  {/* ─── Proof Strip ─── */}
+  <section id="proof" aria-label="Proof" class="site-section" data-reveal>
+    <ProofStrip />
+  </section>
+
+  {/* ─── Workflow ─── */}
+  <section id="workflow" aria-labelledby="workflow-heading" class="site-section" data-reveal>
+    <WorkflowRail />
+  </section>
+
+  {/* ─── Terminal Showcase ─── */}
+  <section id="showcase" aria-label="Showcase" class="site-section" data-reveal>
+    <div class="showcase-container">
+      <h2 class="showcase-heading type-heading">See it in action</h2>
+      <TerminalShowcase client:visible />
+      <noscript>
+        <div class="noscript-showcase type-body">
+          <p>The terminal showcase requires JavaScript to display the SRT output simulation.</p>
+        </div>
+      </noscript>
+    </div>
+  </section>
+
+  {/* ─── Specs ─── */}
+  <section id="specs" aria-labelledby="specs-heading" class="site-section" data-reveal>
+    <SpecsTable />
+  </section>
+
+  {/* ─── Privacy ─── */}
+  <section id="privacy" aria-labelledby="privacy-heading" class="site-section" data-reveal>
+    <PrivacyReadout />
+  </section>
+
+  {/* ─── Download ─── */}
+  <section id="download" aria-labelledby="download-heading" class="site-section" data-reveal>
+    <DownloadPanel client:load release={RELEASE} />
+    <noscript>
+      <div class="noscript-download">
+        <div class="noscript-download-inner">
+          <p class="type-body" style="color: var(--text-secondary);">
+            SPECTER is not publicly downloadable yet. Check back for release updates.
+          </p>
+        </div>
+      </div>
+    </noscript>
+  </section>
+
+  {/* ─── Dossier ─── */}
+  <section id="dossier" aria-labelledby="dossier-heading" class="site-section" data-reveal>
+    <DossierPreview />
+  </section>
+
+  {/* ─── FAQ ─── */}
+  <section id="faq" aria-labelledby="faq-heading" class="site-section" data-reveal>
+    <FAQAccordion />
+  </section>
+
+  {/* ─── Footer ─── */}
+  <Footer />
+</BaseLayout>
+
+{/* ─── Scroll-driven section reveals ─── */}
+<script>
+  function initSectionReveals(): void {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const revealSections = document.querySelectorAll<HTMLElement>('[data-reveal]');
+
+    if (prefersReducedMotion) {
+      // Show all sections immediately
+      revealSections.forEach((section) => {
+        section.classList.add('section-revealed');
+      });
+      return;
+    }
+
+    // Initially hide sections for animation
+    revealSections.forEach((section) => {
+      section.style.opacity = '0';
+      section.style.transform = 'translateY(16px)';
+    });
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const section = entry.target as HTMLElement;
+            section.style.opacity = '';
+            section.style.transform = '';
+            section.classList.add('section-revealed');
+            observer.unobserve(section);
+
+            // Stagger children that opt in
+            const staggerItems = section.querySelectorAll<HTMLElement>('[role="listitem"]');
+            staggerItems.forEach((item, i) => {
+              item.style.setProperty('--stagger-index', String(i));
+              item.classList.add('stagger-item-reveal');
+            });
+          }
+        });
+      },
+      { threshold: 0.15 },
+    );
+
+    revealSections.forEach((section) => observer.observe(section));
+  }
+
+  // ─── Active nav link highlighting ───
+  function initActiveNavLinks(): void {
+    const navLinks = document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]');
+    const sections = document.querySelectorAll<HTMLElement>('section[id]');
+
+    if (navLinks.length === 0 || sections.length === 0) return;
+
+    // Map section IDs to nav link data-nav-link attributes
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // Find all sections currently intersecting
+        const visibleSections: { id: string; top: number }[] = [];
+
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            visibleSections.push({
+              id: (entry.target as HTMLElement).id,
+              top: entry.boundingClientRect.top,
+            });
+          }
+        });
+
+        // Use last-scrolled-to visible section: the one nearest top of viewport
+        if (visibleSections.length > 0) {
+          visibleSections.sort((a, b) => Math.abs(a.top) - Math.abs(b.top));
+          const activeId = visibleSections[0].id;
+
+          navLinks.forEach((link) => {
+            const linkTarget = link.getAttribute('data-nav-link');
+            if (linkTarget === activeId || (activeId === 'hero' && linkTarget === 'proof')) {
+              link.setAttribute('aria-current', 'page');
+            } else {
+              link.removeAttribute('aria-current');
+            }
+          });
+        }
+      },
+      {
+        // Offset for fixed nav height
+        rootMargin: '-80px 0px -40% 0px',
+        threshold: 0,
+      },
+    );
+
+    sections.forEach((section) => observer.observe(section));
+  }
+
+  initSectionReveals();
+  initActiveNavLinks();
+</script>
+
+<style>
+  /* ─── Section spacing ─── */
+  .site-section {
+    padding-top: var(--space-12);
+    padding-bottom: var(--space-12);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .site-section:last-of-type {
+    border-bottom: none;
+  }
+
+  /* ─── Section reveal animation ─── */
+  .section-revealed {
+    animation: scan-enter 220ms var(--ease-out-expo) both;
+  }
+
+  /* Staggered child reveals */
+  .stagger-item-reveal {
+    animation: card-entrance var(--duration-medium) var(--ease-out-expo) both;
+    animation-delay: calc(var(--stagger-index, 0) * 40ms);
+  }
+
+  /* ─── Showcase container ─── */
+  .showcase-container {
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: 0 var(--margin-desktop);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+  }
+
+  .showcase-heading {
+    color: var(--text-primary);
+    text-align: center;
+  }
+
+  .noscript-showcase {
+    color: var(--text-muted);
+    text-align: center;
+    padding: var(--space-6);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sharp);
+    background-color: var(--surface-raised);
+    max-width: 720px;
+    width: 100%;
+  }
+
+  /* ─── NoScript download fallback ─── */
+  .noscript-download {
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: var(--space-4) var(--margin-desktop);
+  }
+
+  .noscript-download-inner {
+    padding: var(--download-padding);
+    background-color: var(--download-bg);
+    border: 1px solid var(--download-border);
+    border-radius: var(--download-radius);
+  }
+
+  /* ─── Tablet ─── */
+  @media (max-width: 1023px) {
+    .showcase-container {
+      padding: 0 var(--margin-tablet);
+    }
+
+    .noscript-download {
+      padding: var(--space-4) var(--margin-tablet);
+    }
+  }
+
+  /* ─── Mobile ─── */
+  @media (max-width: 767px) {
+    .site-section {
+      padding-top: var(--space-8);
+      padding-bottom: var(--space-8);
+    }
+
+    .showcase-container {
+      padding: 0 var(--margin-mobile);
+    }
+
+    .noscript-download {
+      padding: var(--space-4) var(--margin-mobile);
+    }
+  }
+
+  /* ─── Reduced motion: sections visible immediately ─── */
+  @media (prefers-reduced-motion: reduce) {
+    .section-revealed {
+      animation: none;
+    }
+
+    .stagger-item-reveal {
+      animation: none;
+    }
+  }
+</style>

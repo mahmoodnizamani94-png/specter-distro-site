@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <!-- SPECTER glyph: angular signal wave mark in phosphor-300 -->
+  <path
+    d="M20 88 L40 40 L52 68 L64 24 L76 68 L88 40 L108 88"
+    stroke="oklch(0.76 0.20 145)"
+    stroke-width="8"
+    stroke-linecap="square"
+    stroke-linejoin="miter"
+    fill="none"
+  />
+  <circle
+    cx="64"
+    cy="24"
+    r="4"
+    fill="oklch(0.76 0.20 145)"
+  />
+</svg>

@@ -1,0 +1,143 @@
+---
+/**
+ * SPECTER SITE — Footer
+ *
+ * Persistent site footer with:
+ * - SPECTER logotype in Syne, Label scale
+ * - External links: GitHub, Releases, License
+ * - Version from release config (or "Pre-release" for coming_soon)
+ * - Credit: "Built by Muhammad Ahmed"
+ * - 1px border.subtle separator above
+ *
+ * @see PRD §FR-11
+ */
+
+import { RELEASE } from '../content/release';
+
+const version = RELEASE.apk.versionName
+  ? `v${RELEASE.apk.versionName}`
+  : 'Pre-release';
+
+interface FooterLink {
+  label: string;
+  href: string;
+}
+
+// Assumption: repo URLs use placeholder until real repo is configured
+const FOOTER_LINKS: FooterLink[] = [
+  { label: 'GitHub', href: 'https://github.com/' },
+  { label: 'Releases', href: 'https://github.com/' },
+  { label: 'License', href: 'https://github.com/' },
+];
+---
+
+<footer class="site-footer" role="contentinfo">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <span class="footer-logo type-label">SPECTER</span>
+      <nav class="footer-links" aria-label="Footer links">
+        {FOOTER_LINKS.map((link) => (
+          <a
+            href={link.href}
+            class="footer-link type-caption"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {link.label}
+          </a>
+        ))}
+      </nav>
+    </div>
+
+    <div class="footer-bottom">
+      <span class="footer-version type-caption tnum">{version}</span>
+      <span class="footer-separator" aria-hidden="true">·</span>
+      <span class="footer-credit type-caption">Built by Muhammad Ahmed</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--footer-border-top);
+    background-color: var(--footer-bg);
+    padding: var(--space-6) 0;
+  }
+
+  .footer-inner {
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: 0 var(--margin-desktop);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .footer-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+
+  .footer-logo {
+    color: var(--text-accent);
+    font-family: var(--font-display);
+    letter-spacing: 0.04em;
+  }
+
+  .footer-links {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .footer-link {
+    color: var(--footer-link);
+    text-decoration: none;
+    transition: color var(--duration-fast) var(--ease-standard);
+  }
+
+  .footer-link:hover {
+    color: var(--footer-link-hover);
+  }
+
+  .footer-bottom {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    flex-wrap: wrap;
+  }
+
+  .footer-version {
+    color: var(--footer-text);
+  }
+
+  .footer-separator {
+    color: var(--footer-text);
+  }
+
+  .footer-credit {
+    color: var(--footer-text);
+  }
+
+  /* ─── Tablet ─── */
+  @media (max-width: 1023px) {
+    .footer-inner {
+      padding: 0 var(--margin-tablet);
+    }
+  }
+
+  /* ─── Mobile ─── */
+  @media (max-width: 767px) {
+    .footer-inner {
+      padding: 0 var(--margin-mobile);
+    }
+
+    .footer-top {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>

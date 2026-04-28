@@ -1,0 +1,685 @@
+/* ═══════════════════════════════════════════════════════════
+   SPECTER SITE — React Island Styles
+   Styles for React island components (ReleaseRadar, TerminalShowcase).
+   These components render client-side, so scoped Astro styles
+   do not apply. This stylesheet is imported in BaseLayout.
+   ═══════════════════════════════════════════════════════════ */
+
+
+/* ─── Release Radar ─── */
+
+.release-radar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  max-width: 400px;
+}
+
+.radar-visual {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  aspect-ratio: 1;
+}
+
+.radar-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.radar-sweep-group {
+  transform-origin: 160px 160px;
+  animation: radar-sweep var(--duration-radar) linear infinite;
+}
+
+.radar-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-0-5);
+  pointer-events: none;
+}
+
+.radar-state-label {
+  font-family: var(--font-code);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--type-size-label);
+  line-height: var(--line-height-label);
+  letter-spacing: 0.1em;
+  color: var(--radar-center-text);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.radar-version {
+  font-family: var(--font-code);
+  font-weight: var(--font-weight-regular);
+  font-size: var(--type-size-caption);
+  line-height: var(--line-height-caption);
+  color: var(--radar-label);
+  font-feature-settings: 'kern' 1, 'liga' 1, 'tnum' 1;
+}
+
+/* Readouts — grid below the radar */
+.radar-readouts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-1) var(--space-4);
+  width: 100%;
+  max-width: 360px;
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--surface-sunken);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sharp);
+}
+
+.radar-readout {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.radar-readout-label {
+  font-family: var(--font-code);
+  font-weight: var(--font-weight-regular);
+  font-size: var(--type-size-caption);
+  line-height: var(--line-height-caption);
+  letter-spacing: 0.06em;
+  color: var(--radar-label);
+  text-transform: uppercase;
+}
+
+.radar-readout-value {
+  font-family: var(--font-code);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--type-size-code);
+  line-height: var(--line-height-code);
+  color: var(--radar-readout-text);
+}
+
+.readout-pending {
+  color: var(--text-disabled);
+  font-weight: var(--font-weight-regular);
+  font-style: italic;
+}
+
+/* ─── Radar Responsive ─── */
+
+@media (max-width: 767px) {
+  .release-radar {
+    max-width: 280px;
+  }
+
+  .radar-visual {
+    max-width: 240px;
+  }
+
+  .radar-readouts {
+    max-width: 240px;
+    gap: var(--space-1) var(--space-3);
+    padding: var(--space-1-5) var(--space-2);
+  }
+}
+
+
+/* ─── Terminal Showcase ─── */
+
+.terminal-showcase {
+  width: 100%;
+  max-width: 720px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--terminal-radius);
+  overflow: hidden;
+  background-color: var(--terminal-bg);
+}
+
+.terminal-title-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 36px;
+  padding: 0 var(--space-2);
+  background-color: var(--terminal-title-bar-bg);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.terminal-dots {
+  display: flex;
+  gap: 6px;
+  padding-left: var(--space-0-5);
+}
+
+.terminal-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: block;
+}
+
+.terminal-dot-1 { background-color: var(--border-default); }
+.terminal-dot-2 { background-color: var(--border-subtle); }
+.terminal-dot-3 { background-color: var(--surface-elevated); }
+
+.terminal-title {
+  color: var(--terminal-title-text);
+  font-size: var(--type-size-caption);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.terminal-body {
+  position: relative;
+  padding: var(--terminal-padding);
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+}
+
+.terminal-scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--overlay-scanline) 0px,
+    var(--overlay-scanline) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  z-index: 1;
+}
+
+.terminal-output {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  flex: 1;
+}
+
+/* ─── SRT Lines ─── */
+
+.srt-line {
+  opacity: 0;
+  transform: translateY(8px);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.srt-line-visible {
+  opacity: 1;
+  transform: translateY(0);
+  animation: segment-reveal 150ms var(--ease-out-expo) both;
+}
+
+.srt-index {
+  font-family: var(--font-code);
+  font-size: var(--type-size-code);
+  line-height: var(--line-height-code);
+  color: var(--terminal-index);
+}
+
+.srt-timestamp {
+  font-family: var(--font-code);
+  font-size: var(--type-size-code);
+  line-height: var(--line-height-code);
+  display: flex;
+  gap: 0;
+  flex-wrap: wrap;
+}
+
+.srt-time {
+  color: var(--terminal-timestamp);
+  font-feature-settings: 'kern' 1, 'liga' 1, 'tnum' 1;
+}
+
+.srt-arrow {
+  color: var(--terminal-arrow);
+}
+
+.srt-text {
+  font-family: var(--font-code);
+  font-size: var(--type-size-code);
+  line-height: var(--line-height-code);
+  color: var(--terminal-cue-text);
+  max-width: none;
+}
+
+/* ─── Progress Bar ─── */
+
+.terminal-progress-track {
+  position: relative;
+  z-index: 2;
+  height: 2px;
+  background-color: var(--terminal-progress-track);
+  margin-top: auto;
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.terminal-progress-fill {
+  height: 100%;
+  background-color: var(--terminal-progress-fill);
+  box-shadow: 0 0 8px 0 var(--terminal-progress-glow);
+  border-radius: 1px;
+  transition: width 50ms linear;
+}
+
+/* ─── Terminal Responsive ─── */
+
+@media (max-width: 767px) {
+  .terminal-body {
+    padding: var(--space-2);
+    min-height: 280px;
+  }
+}
+
+/* ─── Reduced Motion ─── */
+
+@media (prefers-reduced-motion: reduce) {
+  .radar-sweep-group {
+    animation: none;
+  }
+
+  .srt-line {
+    opacity: 1;
+    transform: none;
+  }
+
+  .srt-line-visible {
+    animation: none;
+  }
+
+  .terminal-progress-fill {
+    transition: none;
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   Download Panel (React Island — client:load)
+   ═══════════════════════════════════════════════════════════ */
+
+.download-panel {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: 0 var(--margin-desktop);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.download-heading {
+  color: var(--text-primary);
+}
+
+.download-state-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--download-padding);
+  background-color: var(--download-bg);
+  border: 1px solid var(--download-border);
+  border-radius: var(--download-radius);
+}
+
+/* ─── Status block (coming_soon) ─── */
+
+.download-status-block {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.download-status-indicator {
+  color: var(--feedback-warning-text);
+  font-size: var(--type-size-code);
+  line-height: 1;
+}
+
+.download-status-text {
+  color: var(--feedback-warning-text);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.06em;
+}
+
+.download-message {
+  color: var(--text-secondary);
+}
+
+.download-dossier-link {
+  display: inline-flex;
+  align-self: flex-start;
+  color: var(--text-accent);
+  text-decoration: none;
+  padding: var(--space-1) 0;
+  border-bottom: 1px solid var(--border-active);
+  transition:
+    color var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard);
+}
+
+.download-dossier-link:hover {
+  color: var(--color-spectra-300);
+  border-color: var(--color-spectra-300);
+}
+
+/* ─── Primary CTA ─── */
+
+.download-cta-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--btn-primary-height);
+  min-width: var(--btn-primary-min-width);
+  padding-left: var(--btn-primary-padding-x);
+  padding-right: var(--btn-primary-padding-x);
+  background-color: var(--btn-primary-bg);
+  color: var(--btn-primary-fg);
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--type-size-label);
+  line-height: var(--line-height-label);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: none;
+  border-radius: var(--btn-primary-radius);
+  cursor: pointer;
+  align-self: flex-start;
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    box-shadow var(--duration-fast) var(--ease-standard);
+}
+
+.download-cta-primary:hover {
+  background-color: var(--btn-primary-bg-hover);
+}
+
+.download-cta-primary:active {
+  background-color: var(--btn-primary-bg-pressed);
+}
+
+/* ─── Secondary CTA ─── */
+
+.download-cta-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--btn-secondary-height);
+  padding-left: var(--btn-primary-padding-x);
+  padding-right: var(--btn-primary-padding-x);
+  background-color: var(--btn-secondary-bg);
+  color: var(--btn-secondary-fg);
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--type-size-label);
+  line-height: var(--line-height-label);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: 1px solid var(--btn-secondary-border);
+  border-radius: var(--btn-secondary-radius);
+  cursor: pointer;
+  align-self: flex-start;
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard);
+}
+
+.download-cta-secondary:hover {
+  background-color: var(--btn-secondary-bg-hover);
+  border-color: var(--btn-secondary-border-hover);
+}
+
+.download-cta-secondary:active {
+  background-color: var(--btn-secondary-bg-pressed);
+}
+
+/* ─── Fallback text ─── */
+
+.download-fallback-text {
+  color: var(--text-muted);
+  max-width: none;
+}
+
+.download-url-visible {
+  color: var(--text-accent);
+  text-decoration: none;
+  border-bottom: 1px solid var(--border-active);
+  transition: color var(--duration-fast) var(--ease-standard);
+  word-break: break-all;
+}
+
+.download-url-visible:hover {
+  color: var(--color-spectra-300);
+}
+
+/* ─── Warning block ─── */
+
+.download-warning-block {
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--download-warning-bg);
+  border: 1px solid var(--download-warning-border);
+  border-radius: var(--radius-sharp);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.download-warning-text {
+  color: var(--download-warning-text);
+}
+
+.download-warning-fallback {
+  color: var(--text-muted);
+  max-width: none;
+}
+
+/* ─── Collapsible sections ─── */
+
+.download-advanced,
+.download-instructions {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sharp);
+  overflow: hidden;
+}
+
+.download-advanced-toggle,
+.download-instructions-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-standard);
+  width: 100%;
+}
+
+.download-advanced-toggle:hover,
+.download-instructions-toggle:hover {
+  color: var(--text-primary);
+}
+
+.toggle-text {
+  flex: 1;
+}
+
+.toggle-chevron {
+  font-size: 10px;
+  line-height: 1;
+  transition: transform var(--duration-fast) var(--ease-standard);
+  display: flex;
+  align-items: center;
+}
+
+.download-advanced[open] > .download-advanced-toggle > .toggle-chevron,
+.download-instructions[open] > .download-instructions-toggle > .toggle-chevron {
+  transform: rotate(180deg);
+}
+
+.download-advanced-content,
+.download-instructions-content {
+  padding: var(--space-3);
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* ─── APK Metadata ─── */
+
+.apk-metadata {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1-5);
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--surface-sunken);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sharp);
+}
+
+.apk-meta-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.apk-meta-label {
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  min-width: 72px;
+  flex-shrink: 0;
+}
+
+.apk-meta-value {
+  color: var(--download-version-text);
+}
+
+.apk-sha {
+  word-break: break-all;
+  color: var(--download-checksum-text);
+}
+
+.apk-meta-checksum {
+  flex-wrap: wrap;
+}
+
+.apk-checksum-actions {
+  display: flex;
+  gap: var(--space-1);
+  margin-left: auto;
+}
+
+.checksum-action-btn {
+  color: var(--text-accent);
+  background: none;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sharp);
+  padding: 2px var(--space-1);
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard);
+}
+
+.checksum-action-btn:hover {
+  background-color: var(--surface-overlay);
+  border-color: var(--border-active);
+}
+
+.apk-signing-note {
+  color: var(--text-muted);
+  max-width: none;
+}
+
+/* ─── Install steps ─── */
+
+.install-steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  color: var(--text-secondary);
+  counter-reset: install-step;
+  padding-left: var(--space-3);
+}
+
+.install-steps li {
+  counter-increment: install-step;
+  position: relative;
+  max-width: var(--text-max-width);
+}
+
+.install-steps li::before {
+  content: counter(install-step) ".";
+  position: absolute;
+  left: calc(-1 * var(--space-3));
+  color: var(--text-accent);
+  font-family: var(--font-code);
+  font-size: var(--type-size-code);
+  font-feature-settings: 'kern' 1, 'liga' 1, 'tnum' 1;
+}
+
+/* ─── Alt link and legal ─── */
+
+.download-alt-link {
+  color: var(--text-muted);
+  max-width: none;
+}
+
+.download-legal {
+  color: var(--text-muted);
+  max-width: none;
+  font-style: italic;
+}
+
+/* ─── Responsive ─── */
+
+@media (max-width: 1023px) {
+  .download-panel {
+    padding: 0 var(--margin-tablet);
+  }
+}
+
+@media (max-width: 767px) {
+  .download-panel {
+    padding: 0 var(--margin-mobile);
+  }
+
+  .download-state-panel {
+    padding: var(--space-3);
+  }
+
+  .download-cta-primary {
+    width: 100%;
+    align-self: stretch;
+  }
+
+  .download-cta-secondary {
+    width: 100%;
+    align-self: stretch;
+  }
+
+  .apk-meta-label {
+    min-width: auto;
+  }
+
+  .apk-checksum-actions {
+    margin-left: 0;
+    width: 100%;
+  }
+}
