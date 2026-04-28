@@ -283,6 +283,12 @@
   --four-oh-four-body:  var(--text-secondary);
   --four-oh-four-link:  var(--text-accent);
 
+  /* ─── Signal Lock (hero decrypt animation) ─── */
+  --signal-cursor-width: 2px;
+  --signal-cursor-color: var(--color-phosphor-400);
+  --signal-lock-glow: var(--color-phosphor-300);
+  --signal-lock-glow-radius: 20px;
+
 
   /* ═══════════════════════════════════════════
      Typography

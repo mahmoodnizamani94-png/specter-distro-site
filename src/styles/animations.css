@@ -31,6 +31,27 @@
 }
 
 
+/* ─── decrypt-char-lock ───
+   Per-character phosphor flash on resolve.
+   Duration: 250ms.
+   Easing: var(--ease-out-expo) — cubic-bezier(0.16, 1, 0.3, 1) */
+
+@keyframes decrypt-char-lock {
+  0% {
+    text-shadow: 0 0 0 transparent;
+    opacity: 0.7;
+  }
+  40% {
+    text-shadow: 0 0 16px var(--signal-lock-glow);
+    opacity: 1;
+  }
+  100% {
+    text-shadow: 0 0 0 transparent;
+    opacity: 1;
+  }
+}
+
+
 /* ─── phosphor-pulse ───
    CTA hover + logotype resolve glow.
    Duration: 300ms.
