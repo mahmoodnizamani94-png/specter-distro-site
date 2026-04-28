@@ -22,3 +22,12 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# editor config
+.vscode/
+
+# internal / private
+.agents/
+AGENTS.md
+GEMINI.md
+prd/
